@@ -1,117 +1,156 @@
-# Concepto y especificación — App de Inspecciones y Gestión de Hallazgos
+# Concepto y especificación — App de Inspección y Presentación de Resultados
 
 > **Nombre de trabajo:** SEK Estructuras *(tentativo)*
-> **Producto:** Herramienta independiente de inspección y gestión legal/logística de hallazgos. Propiedad de su creador.
-> **Filosofía:** 80/20 · *menos es más* · **norma abierta** (la norma valida donde aplica; el riesgo manda siempre).
-> **Estado:** Documento de concepto **v0.4** — enfocado al núcleo de valor.
+> **Producto:** Herramienta independiente para **ejecutar inspecciones y entregar resultados**. Propiedad de su creador.
+> **Filosofía:** 80/20 · *menos es más* · **norma abierta** · **la app entrega y se detiene**.
+> **Estado:** Documento de concepto **v0.5** — frontera de alcance definida.
 > **Fecha:** 2026-07-15
 
 ---
 
 ## 📖 Cómo leer este documento
 
-> - **Negrita** = contenido agregado en la revisión de los tres perfiles, con su código de origen: **E#** (estructuralista), **S#** (salud ocupacional), **U#** (apps/UX).
+> - **Negrita** = adición de la revisión de tres perfiles, con código: **E#** (estructuralista), **S#** (salud ocupacional), **U#** (apps/UX).
 > - *Cursiva* = énfasis.
-> - **Novedad v0.4:** se aplicó Pareto 80/20 para dejar el producto en su núcleo de valor, y se abrió el modelo para que **no dependa de una norma específica**. Detalle en [§15](#15-trazabilidad-de-cambios).
+> - **Novedad v0.5:** se fijó la **frontera de alcance**. La app cubre inspección + presentación de resultados; todo el seguimiento posterior a la entrega (reparación, cierre, verificación) queda **fuera**. Detalle en [§2](#2-frontera-de-alcance-lo-que-la-app-hace-y-lo-que-no) y [§13](#13-trazabilidad-de-cambios).
 
 ---
 
 ## 1. Principio rector (el filtro de todo)
 
-**El 20% que entrega el 80% del valor** es esto, y solo esto:
+**El 20% que entrega el 80% del valor:**
 
 ```
-   Detectar un hallazgo  →  Ponerle un nivel de riesgo (1–5)  →  Cerrarlo con evidencia trazable
-                                        │
-                              plazos automáticos + alertas
+   Detectar un hallazgo  →  Clasificar su riesgo (1–5)  →  Entregar los resultados
+                                                            (matriz + evidencia +
+                                                             responsable + plazo sugerido)
 ```
 
-Todo lo demás (checklists de norma, sismicidad, taxonomías, cronogramas, módulos de locales…) **es una capa que se apoya sobre ese núcleo, no lo reemplaza.** Si algo no fortalece esa columna vertebral, no entra al MVP.
+La app cumple su función cuando pone los resultados **en blanco y negro, en manos del encargado**. Lo que ese encargado haga después —cotizar, avalar, reparar, pagar— es **seguimiento externo**. La app no se queda esperando a ver qué pasó.
 
-Tres reglas de diseño derivadas:
-- **Menos es más:** cada pantalla justifica su existencia contra el núcleo. Ante la duda, se deja afuera.
-- **El riesgo es el idioma universal**, no la norma. La escala 1–5 aplica a cualquier hallazgo.
-- **Puerta abierta:** el sistema debe registrar tanto lo normado como lo *no normado pero peligroso*.
+Tres reglas de diseño:
+- **Menos es más:** cada pantalla justifica su existencia contra ese núcleo.
+- **El riesgo es el idioma universal**, no la norma.
+- **La app entrega y se detiene.** No gestiona la reparación.
 
 ---
 
-## 2. El núcleo del producto
+## 2. Frontera de alcance (lo que la app hace y lo que NO)
 
-### 2.1 La columna vertebral (siempre presente)
+> **Novedad v0.5 — la sección más importante.** Define de qué responde el producto y de qué no.
 
-Todo hallazgo, sea del tipo que sea, recorre el mismo ciclo:
+| ✅ DENTRO — Inspección + presentación de resultados | ❌ FUERA — Seguimiento de la reparación |
+|---|---|
+| Planificar y ejecutar la inspección | Que un proveedor evalúe el hallazgo |
+| Detectar y describir hallazgos (normados y no normados) | Cotizaciones |
+| Clasificar el nivel de riesgo (1–5) | Aval de compra / presupuesto |
+| Evidencia fotográfica | Diseño/aval de la solución técnica |
+| **Registrar limitaciones y elementos NO evaluados** | Ejecución de la reparación |
+| Acción inmediata en campo (nivel 5) | Recepción y pago |
+| Armar la matriz y **generar el entregable/informe** | **Cierre / verificación de que se reparó** |
+| Asignar responsable y plazo *sugerido* | Monitoreo en el tiempo de hallazgos "abiertos" |
+| Entregar y dejar constancia de la entrega | Aprobación de remodelaciones · Gantt de mantenimiento |
 
-**Registro (ubicación + foto) → Riesgo 1–5 → Seguimiento (plazos) → Cierre con evidencia → Auditoría trazable**
+**Reinspección:** no es "seguimiento". Es simplemente **ejecutar una inspección nueva** — algo que la app hace de forma natural. Cada inspección es un entregable con fecha propia.
 
-### 2.2 Dos orígenes de hallazgo — **norma abierta**
+---
 
-> **(Novedad v0.4)** Un hallazgo **no requiere una norma detrás** para entrar al sistema. Se distinguen dos orígenes, ambos con el ciclo completo:
+## 3. El núcleo del producto
 
-| Origen | Qué es | Validación de norma |
+### 3.1 La columna vertebral
+
+**Planificar inspección → Capturar hallazgos (riesgo + evidencia + limitaciones) → Generar y entregar el informe/matriz**
+
+### 3.2 Dos orígenes de hallazgo — **norma abierta**
+
+Un hallazgo **no requiere una norma detrás** para entrar al sistema:
+
+| Origen | Qué es | Norma |
 |---|---|---|
-| **Normado** | Surge de una lista de verificación o estándar (ej. un ítem que resulta *Non-Compliant*). | Sí — se ancla a la referencia normativa. |
-| **No normado (riesgo emergente)** | El criterio profesional detecta un peligro que ninguna norma cubre, pero que igual implica riesgo. | No aplica — el juicio del inspector es suficiente para abrirlo. |
+| **Normado** | Surge de una lista de verificación o estándar. | Se ancla a la referencia. |
+| **No normado (riesgo emergente)** | El criterio profesional detecta un peligro que ninguna norma cubre. | No aplica. |
 
-Lo que **nunca** cambia entre ambos: se le asigna nivel de riesgo 1–5, se documenta con foto, se le calculan plazos y se cierra con evidencia. **La norma es un atributo opcional del hallazgo, no una condición para registrarlo.**
-
----
-
-## 3. Problema que resuelve
-
-Hoy muchos procesos de inspección viven en Word y tablas estáticas: la matriz se llena a mano y se pierde entre versiones, los plazos dependen de que alguien los recuerde, la evidencia fotográfica se dispersa y no hay trazabilidad ni visibilidad en tiempo real. El inspector transcribe todo a mano al volver a la oficina.
-
-La app convierte ese proceso en un sistema vivo, con respaldo legal y trazable.
+Ambos reciben nivel de riesgo 1–5, foto y entran al informe. **La norma es un atributo opcional, no una condición.**
 
 ---
 
-## 4. Terminología (evitar confusiones) — **(E2)**
+## 4. Problema que resuelve
+
+Hoy la inspección vive en Word y tablas estáticas: la matriz se llena a mano, la evidencia se dispersa, las limitaciones no quedan registradas y el inspector transcribe todo al volver a la oficina. El entregable tarda y pierde fuerza probatoria.
+
+La app convierte la inspección en un flujo de captura en campo que produce un **entregable trazable y con respaldo legal** en el momento.
+
+---
+
+## 5. Terminología — **(E2)**
 
 | Término | Qué es | Valores |
 |---|---|---|
-| **Nivel de riesgo del hallazgo** | Priorización de cada hallazgo. El idioma universal del sistema. | 1 a 5 |
+| **Nivel de riesgo del hallazgo** | Priorización de cada hallazgo. Idioma universal. | 1 a 5 |
 | **Origen del hallazgo** | Si nace de una norma o del criterio profesional. | Normado / No normado |
 | **Tipo de elemento** | Naturaleza del elemento. | Estructural / No estructural |
-| **Categoría (no estructural)** | Una de las 11 familias de elementos no estructurales. | 11 categorías |
-| **Categoría de riesgo de la edificación** | Clasificación del edificio (referencia opcional: ASCE 7-16, Tabla 1.5-1). | I–IV |
-| **Resultado de checklist** | Cumplimiento de un ítem normado (solo si el hallazgo es normado). | C / NC / N-A |
+| **Categoría (no estructural)** | Una de las 11 familias. | 11 categorías |
+| **Elemento no evaluado** | Lo que no se pudo inspeccionar, con su motivo y el medio intentado. | — |
+| **Entregable / Informe** | El resultado que se pone en manos del encargado. | Borrador / Emitido |
 
 ---
 
-## 5. Usuarios y roles
+## 6. Usuarios y roles
 
-| Rol | Qué hace | Plataforma |
-|---|---|---|
-| **Inspector** (profesional competente) | Registra hallazgos, clasifica riesgo, verifica cierres, da visto bueno. | Móvil |
-| **Administración** | Coordina accesos, monitoreo, cierres. | Web + Móvil |
-| **Dirección técnica** | Avala soluciones, custodia la matriz. | Web |
-| **Gerencia** | Aprueba presupuestos, atiende escalamientos. | Web (dashboard) |
+| Rol | Qué hace |
+|---|---|
+| **Inspector** (profesional competente) | Ejecuta la inspección, registra hallazgos, clasifica riesgo, firma el entregable. |
+| **Administración / encargado** | Recibe el entregable. Coordina accesos durante la inspección. |
+| **Dirección técnica** (opcional) | Apoya criterios de clasificación / custodia los entregables. |
 
-> El *cierre* y el *visto bueno* están reservados a roles habilitados (regla dura). **El visto bueno registra la colegiatura/registro profesional y queda con sello de tiempo inmutable (E8).**
+> El *entregable firmado* lleva la **colegiatura/registro del profesional competente y sello de tiempo inmutable (E8)**. Lo que el encargado haga con él es externo a la app.
 
 ---
 
-## 6. Alcance
+## 7. Alcance del MVP
 
-### MVP = el núcleo (§1), nada más
+### MVP = capturar la inspección y producir el entregable
 
 - Proyectos y su división en módulos/zonas.
 - **Checklist de seguridad del inspector (ATS + EPP) antes del recorrido (S1).**
-- Registro de hallazgo **(normado o no normado)** con ubicación + foto.
+- Registro de hallazgo **(normado o no normado)**: ubicación, tipo, categoría, descripción, foto.
 - **Asistente guiado que calcula el riesgo 1–5 (S2, U6).**
-- Matriz de hallazgos (**tarjetas en móvil / tabla en web — U4**) con filtros por nivel y estado.
-- Plazos automáticos + **dashboard de vencidos críticos (S5).**
-- Cierre con evidencia obligatoria (foto antes/después + visto bueno; verificación en sitio niveles 4–5).
+- **Registro de limitaciones y elementos no evaluados (medio utilizado: dron/binoculares/pértiga).**
+- Acción inmediata en campo para nivel 5 (**protocolo + contactos, S3**).
+- Matriz de hallazgos (**tarjetas en móvil / tabla en web, U4**).
+- **Generación del entregable/informe firmado (PDF/Excel) — el clímax del producto (U7).**
+- Constancia de entrega (a quién, cuándo).
 
 ### Capas posteriores (después de validar el núcleo)
-
-- **Fase 2 — Campo robusto:** PWA con **offline (U1)**, checklists dentro de la app, fotos con geolocalización, **dictado por voz + autoguardado (U5)**.
-- **Fase 3 — Ciclo completo:** monitoreo trimestral con medición comparativa, reinspección (ordinaria 5 años + gatillos extraordinarios), cronograma de mantenimiento, módulo de locales comerciales, **informe PDF firmado (U7)**, exportación de la matriz, **bandera "requiere análisis de mayor nivel" (E6)**.
-
-> Todo lo relacionado con normas específicas (listas de verificación, sismicidad, desempeño) se trata como **referencia opcional adaptable**, nunca como requisito para operar.
+- **Fase 2:** PWA con **offline (U1)**, checklists de planificación dentro de la app, fotos con geolocalización, **dictado por voz + autoguardado (U5)**.
+- **Fase 3:** plantillas de informe avanzadas, comparación entre inspecciones (reinspección), catálogos de norma como referencia.
 
 ---
 
-## 7. Asistente guiado de riesgo (1–5) — **(S2, U6)**
+## 8. Flujo funcional
+
+```
+1. PLANIFICAR
+   ├─ Crear proyecto → dividir en módulos
+   └─ [S1] Checklist de trabajo seguro del inspector (ATS + EPP)
+
+2. INSPECCIONAR (campo)
+   ├─ Registrar hallazgo (ubicación, tipo, categoría, descripción, foto)
+   ├─ Origen: normado / no normado (riesgo emergente)
+   ├─ [U6] Asistente guiado de riesgo → calcula el nivel 1–5
+   ├─ [E4] Mediciones estructuradas (opcional)
+   ├─ Registrar limitaciones / elementos NO evaluados
+   └─ Nivel 5 → [S3] acción inmediata + contactos
+
+3. ENTREGAR RESULTADOS   ← la app termina aquí
+   ├─ Matriz de hallazgos (filtros por nivel)
+   ├─ Generar informe firmado (colegiatura + sello de tiempo)
+   └─ Constancia de entrega al encargado
+```
+
+---
+
+## 9. Asistente guiado de riesgo (1–5) — **(S2, U6)**
 
 Convierte el paso más subjetivo en 3 preguntas que **calculan** el nivel con una matriz severidad × probabilidad. Aplica igual a hallazgos normados y no normados.
 
@@ -130,13 +169,14 @@ Convierte el paso más subjetivo en 3 preguntas que **calculan** el nivel con un
 
 ---
 
-## 8. Modelo de datos (borrador, centrado en el núcleo)
+## 10. Modelo de datos (borrador)
 
 ```
-Proyecto           id (UUID), nombre, ubicación, [datos de norma: opcionales]
-Módulo             id (UUID), proyecto_id, nombre/zona
-Inspección         id (UUID), proyecto_id, módulo_id, inspector_id, fecha,
-                   **checklist_seguridad_inspector (ATS/EPP) (S1)**
+Proyecto        id (UUID), nombre, ubicación
+Módulo          id (UUID), proyecto_id, nombre/zona
+Inspección      id (UUID), proyecto_id, módulo_id, inspector_id, fecha,
+                condiciones_clima_iluminación,
+                **checklist_seguridad_inspector (ATS/EPP) (S1)**
 
 Hallazgo   ← entidad central
    id (UUID), número, inspección_id, módulo_id,
@@ -145,95 +185,103 @@ Hallazgo   ← entidad central
    **tipo_estructural (columna|viga|muro|marco|conexión|diafragma|cimentación) — opcional (E3)**,
    categoría_no_estructural (1 de 11) — opcional,
    descripción_condición,
-   origen (NORMADO | NO_NORMADO),                        ← norma abierta (v0.4)
+   origen (NORMADO | NO_NORMADO),
    ref_norma / resultado_checklist — SOLO si NORMADO (E1, E5),
    nivel_riesgo (1–5)  ← SIEMPRE,
    **riesgo_severidad, riesgo_probabilidad, riesgo_justificación (S2)**,
-   responsable_id, plazo_atención (calculado), estado (ABIERTO|EN_PROCESO|CERRADO),
-   fecha_registro, fecha_cierre
+   **requiere_análisis_mayor_nivel (bool) (E6)**,
+   responsable_sugerido, plazo_sugerido (calculado según nivel),
+   fecha_registro
 
-Foto               id, hallazgo_id, tipo (HALLAZGO|ANTES|DESPUES|MONITOREO),
-                   url, geolocalización, timestamp  **→ inmutable, cadena de custodia (S6)**
-**Medición (E4)**  id, hallazgo_id, tipo (fisura_mm|desplome|deflexión|corrosión…), valor, fecha
-Cierre             id, hallazgo_id, fecha, foto_antes_id, foto_después_id,
-                   verificación_en_sitio (obligatorio 4–5),
-                   **profesional_id, colegiatura_registro, sello_tiempo (E8)**
-**Escalamiento (S4)** id, hallazgo_id, motivo, dirigido_a, fecha_envío, respuesta
-Usuario            id (UUID), nombre, rol, colegiatura/registro, es_profesional_competente
+Foto            id, hallazgo_id, url, geolocalización, timestamp
+                **→ inmutable, cadena de custodia (S6)**
+**Medición (E4)** id, hallazgo_id, tipo (fisura_mm|desplome|deflexión|corrosión…), valor, fecha
+
+ElementoNoEvaluado   ← nuevo (valor legal / alcance real)
+   id, inspección_id, módulo_id (opcional),
+   descripción (qué no se pudo evaluar),
+   motivo (cielo/acabado | acceso | iluminación | sin registro | otro),
+   medio_intentado (dron | binoculares | pértiga | zoom | ninguno)
+
+Informe (Entregable)   ← el clímax del producto
+   id, inspección_id, fecha_emisión,
+   profesional_id, **colegiatura_registro, sello_tiempo (E8)**,
+   resumen_por_nivel, formato (PDF | EXCEL),
+   estado (BORRADOR | EMITIDO),
+   constancia_entrega (a_quién, fecha)
+
+Usuario         id (UUID), nombre, rol, colegiatura/registro, es_profesional_competente
 ```
 
 > **(U2)** IDs UUID en cliente + timestamps = modelo listo para el offline de la Fase 2 sin reescribir.
+> **Nota:** no hay entidades de cierre, monitoreo ni escalamiento — quedan **fuera de alcance** (§2).
 
 ---
 
-## 9. Reglas de negocio (la columna legal — no se pueden saltar)
+## 11. Reglas de negocio (la columna legal)
 
 | Regla | Comportamiento |
 |---|---|
-| *Nivel 5* = inminente a la vida | Mitigación ≤ *72 h* · reparación ≤ 3 meses. Alerta crítica + notificación. **Abre protocolo de emergencia con contactos (S3).** |
-| *Nivel 4* = crítico | Reparación ≤ *3 meses* + notificación inmediata. |
-| *Niveles 2–3* | 3 meses – 1 año + monitoreo trimestral con foto **y medición (E4)** comparativa. |
-| *Nivel 1* | Según programación; mantenimiento interno; monitoreo trimestral. |
 | *Todo hallazgo* | ≥ 1 foto + nivel de riesgo asignado. No se guarda incompleto. **La norma NO es obligatoria; el riesgo sí.** |
-| *Cierre* | Foto *antes + después* + visto bueno. Niveles 4–5: además verificación *en sitio*. Sin esto no pasa a `Cerrado`. |
-| **Riesgo aceptado (S4)** | **Escalamiento formal a gerencia registrado como evidencia trazable, no como correo suelto.** |
-| *Plazos* | `fecha_plazo` calculada automáticamente desde el nivel y la fecha de registro. |
+| *Nivel 5* = inminente a la vida | **Acción inmediata en campo** (acordonar, cerrar válvulas) + **protocolo de emergencia con contactos (S3)**. En el informe: mitigación sugerida ≤ 72 h. |
+| *Plazos* | `plazo_sugerido` calculado automáticamente por nivel. **Es una recomendación del entregable, no algo que la app vigile.** |
+| **Limitaciones** | Dejar constancia de todo elemento no evaluado, su motivo y el medio intentado. Delimita el alcance real de la inspección. |
+| *Entregable* | Firmado por profesional competente (colegiatura + sello de tiempo). Evidencia con **cadena de custodia inmutable (S6)**. |
 
 ---
 
-## 10. UX, arquitectura y seguridad (lo esencial)
+## 12. UX, arquitectura y seguridad (lo esencial)
 
 - **(U1) PWA única** (web + móvil en un solo código) → **(U2)** modelo sync-ready para offline en Fase 2.
 - **(U3)** El color de riesgo nunca va solo: **color + número + ícono** (accesibilidad, sol de campo).
 - **(U9)** Fotos: compresión en cliente + subida directa a la nube (URLs firmadas); original conservado como evidencia.
-- **(S6)** Log inmutable de cambios, cierres y fotos — defendible ante instancias legales/aseguradoras/autoridades.
-- **(S1) Seguridad del inspector (eje SSO):** checklist ATS, EPP, permisos de altura/espacio confinado, peligros eléctricos. Marco: normativa SSO aplicable en la jurisdicción.
-- Acciones sensibles (cierre, visto bueno) restringidas por rol. Idioma español (configurable por región).
-
----
-
-## 11. Decisiones pendientes
-
-1. Nombre definitivo y branding.
-2. ¿Multi-proyecto (multi-tenant) desde el inicio o un proyecto?
-3. Subcategorías no estructurales: ¿catálogo o texto libre en el MVP?
-4. Firmas: ¿firma digital formal o registro + visto bueno + colegiatura?
-5. Notificaciones: ¿correo, push, o ambas?
-6. Stack tecnológico y hosting.
-7. **(S2)** Calibración de la matriz severidad × probabilidad.
-8. **(E7)** Umbral de "sismo significativo" para reinspección extraordinaria.
-
-> **Resuelto en v0.4:** el alcance del dominio → **norma abierta**. No se cierra a una norma; valida donde aplica y admite riesgo no normado.
-
----
-
-## 12. Próximo paso propuesto
-
-**Prototipo visual navegable** de las pantallas del núcleo (§1): registro de hallazgo con origen normado/no normado, asistente de riesgo, matriz + dashboard de vencidos, y cierre con evidencia. Validar la columna vertebral antes de escribir código de producción.
+- **(S6)** Log inmutable de la evidencia y del entregable — defendible ante instancias legales/aseguradoras.
+- **(S1) Seguridad del inspector (eje SSO):** checklist ATS, EPP, permisos de altura/espacio confinado, peligros eléctricos.
+- Idioma español (configurable por región).
 
 ---
 
 ## 13. Trazabilidad de cambios
 
-**v0.3 → v0.4 (Pareto 80/20 + norma abierta):**
-- Se antepone el **principio rector**: núcleo = detectar → clasificar riesgo → cerrar con evidencia.
-- **Norma abierta:** el hallazgo puede ser *normado* o *no normado (riesgo emergente)*; la norma es atributo opcional, no requisito.
-- MVP recortado estrictamente al núcleo; todo lo demás pasa a capas posteriores o referencia opcional.
-- Documento condensado (*menos es más*).
+**v0.4 → v0.5 (frontera de alcance):**
+- Definida la **frontera**: la app cubre *inspección + presentación de resultados*; el seguimiento de la reparación queda **fuera** (§2).
+- **Cierre eliminado por completo** (foto antes/después, visto bueno, verificación en sitio) → fuera de alcance.
+- **Monitoreo trimestral y escalamiento (S4, S5) → fuera** (son seguimiento posterior a la entrega).
+- **El entregable/informe firmado sube al MVP** (antes Fase 3): es el clímax del producto.
+- **Elementos no evaluados / limitaciones → al MVP** (valor legal: define el alcance real).
+- Reinspección reencuadrada como *ejecutar una inspección nueva*, no como seguimiento.
 
-**v0.2 → v0.3 (base cero):** eliminadas todas las referencias a organizaciones, procedimientos y nombres propios de terceros; producto reencuadrado como independiente.
+**v0.3 → v0.4:** Pareto 80/20 + norma abierta (hallazgo normado / no normado).
+**v0.2 → v0.3:** base cero — eliminadas referencias a organizaciones y nombres propios de terceros.
 
-**Adiciones de la revisión de tres perfiles (v0.2):**
+**Adiciones vigentes de la revisión de tres perfiles:**
 
 | | |
 |---|---|
-| **E1** Separar resultado de checklist vs. nivel de riesgo | **S1** Seguridad del inspector (ATS/EPP) |
+| **E1** Checklist normado ≠ nivel de riesgo | **S1** Seguridad del inspector (ATS/EPP) |
 | **E2** Terminología sin colisiones | **S2** Matriz severidad × probabilidad |
-| **E3** Taxonomía de elementos estructurales | **S3** Protocolo de emergencia nivel 5 |
-| **E4** Mediciones estructuradas | **S4** Escalamiento de riesgo aceptado |
-| **E5** Trazabilidad a norma/patrón (si aplica) | **S5** Dashboard de vencidos críticos |
-| **E6** Bandera "análisis de mayor nivel" | **S6** Cadena de custodia inmutable |
-| **E7** Umbral de sismo significativo | **U1** PWA única · **U2** sync-ready |
-| **E8** Colegiatura + sello de tiempo | **U3** Color accesible · **U4** tarjetas/tabla |
-| | **U5** Voz + autoguardado · **U6** asistente de riesgo |
-| | **U7** PDF firmado · **U8** MVP mínimo · **U9** fotos a la nube |
+| **E3** Taxonomía de elementos estructurales | **S3** Acción inmediata / protocolo nivel 5 |
+| **E4** Mediciones estructuradas | **S6** Cadena de custodia inmutable |
+| **E5** Trazabilidad a norma (si aplica) | **U1** PWA · **U2** sync-ready · **U3** color accesible |
+| **E6** Bandera "análisis de mayor nivel" | **U4** tarjetas/tabla · **U5** voz + autoguardado |
+| **E8** Colegiatura + sello en el entregable | **U6** asistente de riesgo · **U7** informe · **U9** fotos a la nube |
+
+> *Retiradas de alcance en v0.5:* **S4** (escalamiento) y **S5** (dashboard de vencidos) — pertenecen al seguimiento posterior a la entrega.
+
+---
+
+## 14. Decisiones pendientes
+
+1. Nombre definitivo y branding.
+2. ¿Multi-proyecto (multi-tenant) desde el inicio o un proyecto?
+3. Subcategorías no estructurales: ¿catálogo o texto libre en el MVP?
+4. Formato del entregable: ¿plantilla PDF fija o configurable?
+5. Firma del informe: ¿firma digital formal o registro + colegiatura + sello?
+6. Stack tecnológico y hosting.
+7. **(S2)** Calibración de la matriz severidad × probabilidad.
+
+---
+
+## 15. Próximo paso propuesto
+
+**Prototipo visual navegable** del núcleo (§3): captura de hallazgo (normado / no normado) con asistente de riesgo, registro de elementos no evaluados, matriz, y **generación del entregable firmado**. Validar la columna vertebral antes de escribir código.
