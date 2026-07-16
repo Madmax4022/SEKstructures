@@ -1,0 +1,635 @@
+<title>SEK Estructuras — Prototipo v0.5</title>
+<style>
+  :root{
+    --brand:#1f3a5f; --brand-strong:#16304f; --brand-soft:#2f5688;
+    --accent:#2f8f9d;
+    --risk-5:#d6304a; --risk-4:#df7333; --risk-3:#cf9a17; --risk-2:#3e9b5f; --risk-1:#3e77c4;
+    --paper:#eef2f7; --surface:#ffffff; --surface-2:#f4f7fb; --surface-3:#eaf0f7;
+    --line:#d9e2ee; --line-strong:#c2cfe0;
+    --text:#152238; --text-dim:#5a6b84; --text-faint:#8695ac;
+    --backdrop:#0a1524;
+    --ok:#3e9b5f; --shadow:0 18px 50px -22px rgba(6,18,38,.55);
+    --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --r:16px; --r-sm:10px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --brand:#4d84c4; --brand-strong:#3a6ca8; --brand-soft:#6f9fd6;
+      --paper:#0d1420; --surface:#141d2c; --surface-2:#101927; --surface-3:#1a2536;
+      --line:#26344a; --line-strong:#33445e;
+      --text:#e7eef7; --text-dim:#9aabc2; --text-faint:#6d7e97;
+      --backdrop:#060d18; --shadow:0 20px 60px -20px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="light"]{
+    --brand:#1f3a5f; --brand-strong:#16304f; --brand-soft:#2f5688;
+    --paper:#eef2f7; --surface:#ffffff; --surface-2:#f4f7fb; --surface-3:#eaf0f7;
+    --line:#d9e2ee; --line-strong:#c2cfe0;
+    --text:#152238; --text-dim:#5a6b84; --text-faint:#8695ac; --backdrop:#0a1524;
+    --shadow:0 18px 50px -22px rgba(6,18,38,.55);
+  }
+  :root[data-theme="dark"]{
+    --brand:#4d84c4; --brand-strong:#3a6ca8; --brand-soft:#6f9fd6;
+    --paper:#0d1420; --surface:#141d2c; --surface-2:#101927; --surface-3:#1a2536;
+    --line:#26344a; --line-strong:#33445e;
+    --text:#e7eef7; --text-dim:#9aabc2; --text-faint:#6d7e97;
+    --backdrop:#060d18; --shadow:0 20px 60px -20px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0}
+  .stage{
+    min-height:100vh; font-family:var(--sans); color:var(--text);
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 46px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 46px),
+      radial-gradient(120% 80% at 50% -10%, #16304f 0%, var(--backdrop) 60%);
+    padding:28px 20px 60px; display:flex; flex-direction:column; align-items:center; gap:22px;
+  }
+
+  /* ---- top header rail ---- */
+  .rail{width:100%; max-width:920px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+  .brand{display:flex; align-items:center; gap:12px}
+  .glyph{width:40px;height:40px;border-radius:10px;background:linear-gradient(150deg,var(--brand-soft),var(--brand-strong));
+    display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+  .glyph svg{width:22px;height:22px}
+  .brand h1{margin:0;font-size:17px;letter-spacing:.2px;color:#eaf1fb}
+  .brand p{margin:2px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.5px;color:#8fa6c4;text-transform:uppercase}
+  .rail-right{display:flex;align-items:center;gap:8px}
+  .legend{display:flex;gap:5px;align-items:center;background:rgba(255,255,255,.05);padding:6px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.09)}
+  .legend b{font-family:var(--mono);font-size:11px;color:#9fb4d1;margin-right:2px;font-weight:600}
+  .dot{width:15px;height:15px;border-radius:5px;font-family:var(--mono);font-size:9px;color:#fff;display:grid;place-items:center;font-weight:700}
+  .tbtn{appearance:none;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#cfe0f5;
+    font-family:var(--mono);font-size:11px;letter-spacing:.4px;padding:8px 11px;border-radius:9px;cursor:pointer}
+  .tbtn:hover{background:rgba(255,255,255,.12)}
+
+  /* ---- phone ---- */
+  .phone{
+    width:100%; max-width:412px; height:min(830px,86vh); background:var(--surface); border-radius:34px;
+    box-shadow:var(--shadow), 0 0 0 10px #0d1a2c, 0 0 0 11px rgba(255,255,255,.06);
+    overflow:hidden; display:flex; flex-direction:column; position:relative;
+  }
+  .statusbar{height:34px;flex:0 0 34px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+    font-family:var(--mono);font-size:11px;color:var(--text-dim);background:var(--surface)}
+  .statusbar .notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:118px;height:20px;background:#0d1a2c;border-radius:0 0 14px 14px}
+
+  .appbar{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px 12px;border-bottom:1px solid var(--line);background:var(--surface)}
+  .back{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);
+    display:grid;place-items:center;cursor:pointer;flex:0 0 auto}
+  .back:hover{border-color:var(--line-strong)}
+  .appbar .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.9px;text-transform:uppercase;color:var(--text-faint)}
+  .appbar h2{margin:1px 0 0;font-size:17px;letter-spacing:-.2px}
+  .appbar .spacer{flex:1}
+  .step-pill{font-family:var(--mono);font-size:10px;color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,transparent);
+    padding:5px 9px;border-radius:999px;font-weight:600;letter-spacing:.4px}
+
+  .scroll{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--surface-2)}
+  .screen{display:none;padding:18px 16px 26px;animation:fade .28s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.screen{animation:none}}
+
+  .lead{color:var(--text-dim);font-size:13px;line-height:1.5;margin:0 0 16px}
+  .sect{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-faint);margin:20px 2px 9px}
+  .sect:first-child{margin-top:2px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:11px;box-shadow:0 1px 0 rgba(10,20,40,.02)}
+  .card.tap{cursor:pointer;transition:border-color .15s, transform .1s}
+  .card.tap:hover{border-color:var(--brand-soft)}
+  .card.tap:active{transform:scale(.995)}
+  .row{display:flex;align-items:center;gap:12px}
+  .grow{flex:1;min-width:0}
+  .title{font-weight:600;font-size:14.5px;letter-spacing:-.1px}
+  .muted{color:var(--text-dim);font-size:12.5px;line-height:1.45}
+  .kv{font-family:var(--mono);font-size:11px;color:var(--text-faint);letter-spacing:.3px}
+  .chev{color:var(--text-faint);flex:0 0 auto}
+  .tag{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10.5px;letter-spacing:.3px;
+    padding:3px 8px;border-radius:6px;background:var(--surface-3);color:var(--text-dim);border:1px solid var(--line)}
+  .tag.norm{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+
+  /* meter + risk badge */
+  .risk{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+  .meter{display:flex;align-items:flex-end;gap:2px;height:22px}
+  .meter i{width:4px;border-radius:1px;background:var(--line-strong);display:block}
+  .meter i:nth-child(1){height:7px}.meter i:nth-child(2){height:10px}.meter i:nth-child(3){height:13px}
+  .meter i:nth-child(4){height:16px}.meter i:nth-child(5){height:20px}
+  .badge{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:#fff;font-family:var(--mono);
+    font-weight:700;font-size:15px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+  .r5{background:var(--risk-5)}.r4{background:var(--risk-4)}.r3{background:var(--risk-3)}.r2{background:var(--risk-2)}.r1{background:var(--risk-1)}
+  .fill5 i:nth-child(-n+5),.fill4 i:nth-child(-n+4),.fill3 i:nth-child(-n+3),.fill2 i:nth-child(-n+2),.fill1 i:nth-child(-n+1){}
+  .stripe{width:4px;align-self:stretch;border-radius:4px;flex:0 0 4px;margin:-14px 12px -14px -14px}
+
+  /* buttons */
+  .btn{appearance:none;border:0;border-radius:12px;font-family:var(--sans);font-size:14.5px;font-weight:600;
+    padding:13px 16px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.1px}
+  .btn.primary{background:var(--brand);color:#fff}
+  .btn.primary:hover{background:var(--brand-strong)}
+  .btn.ghost{background:var(--surface);color:var(--brand);border:1px solid var(--line-strong)}
+  .btn.ghost:hover{border-color:var(--brand)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btnbar{position:sticky;bottom:0;background:linear-gradient(var(--surface-2) 40%,var(--surface-2));padding-top:8px;margin-top:14px;display:flex;flex-direction:column;gap:9px}
+
+  /* forms */
+  label.f{display:block;margin:0 0 13px}
+  label.f > span{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--text-dim);margin:0 0 6px}
+  .in{width:100%;font-family:var(--sans);font-size:14px;color:var(--text);background:var(--surface);border:1px solid var(--line-strong);
+    border-radius:10px;padding:11px 12px}
+  textarea.in{resize:vertical;min-height:70px;line-height:1.45}
+  .in:focus,.seg button:focus-visible,.check:focus-within{outline:2px solid var(--accent);outline-offset:1px}
+  select.in{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%237c8aa2' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+  .seg{display:grid;grid-auto-flow:column;gap:6px;grid-auto-columns:1fr}
+  .seg.wrap{grid-auto-flow:row;grid-template-columns:repeat(2,1fr)}
+  .seg button{font-family:var(--sans);font-size:13px;font-weight:600;padding:11px 8px;border-radius:10px;border:1px solid var(--line-strong);
+    background:var(--surface);color:var(--text-dim);cursor:pointer;transition:.12s}
+  .seg button[aria-pressed="true"]{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .check{display:flex;gap:11px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:9px;cursor:pointer}
+  .check input{margin:2px 0 0;width:18px;height:18px;accent-color:var(--brand);flex:0 0 auto}
+  .check .t{font-weight:600;font-size:13.5px}
+  .check .d{color:var(--text-dim);font-size:12px;margin-top:2px;line-height:1.4}
+  .hint{background:color-mix(in srgb,var(--accent) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));
+    border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--text-dim);line-height:1.5;margin-bottom:14px}
+  .hint b{color:var(--text)}
+  .warn{background:color-mix(in srgb,var(--risk-5) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--risk-5) 34%,var(--line))}
+
+  /* filter chips */
+  .filters{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .fchip{font-family:var(--mono);font-size:11.5px;font-weight:600;padding:6px 11px;border-radius:999px;border:1px solid var(--line-strong);
+    background:var(--surface);color:var(--text-dim);cursor:pointer}
+  .fchip[aria-pressed="true"]{background:var(--text);color:var(--surface);border-color:var(--text)}
+
+  /* risk result */
+  .result{border-radius:16px;padding:18px;text-align:center;color:#fff;margin-bottom:6px}
+  .result .n{font-family:var(--mono);font-size:52px;font-weight:700;line-height:1}
+  .result .lbl{font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;font-size:11px;opacity:.92;margin-top:4px}
+  .result .plazo{margin-top:10px;font-size:12.5px;background:rgba(255,255,255,.16);display:inline-block;padding:5px 11px;border-radius:999px}
+
+  /* report summary bar */
+  .sumbar{display:flex;height:14px;border-radius:7px;overflow:hidden;border:1px solid var(--line);margin:4px 0 12px}
+  .sumbar span{display:block}
+  .counts{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:6px}
+  .cnt{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:9px 4px;text-align:center}
+  .cnt .b{width:26px;height:26px;margin:0 auto 5px;border-radius:7px;color:#fff;font-family:var(--mono);font-weight:700;display:grid;place-items:center;font-size:13px}
+  .cnt .v{font-family:var(--mono);font-size:19px;font-weight:700}
+  .cnt .k{font-size:9.5px;color:var(--text-faint);font-family:var(--mono);letter-spacing:.3px;text-transform:uppercase}
+
+  .sign{background:var(--surface);border:1px dashed var(--line-strong);border-radius:14px;padding:15px;margin:6px 0 4px}
+  .sign .who{font-weight:600;font-size:14px}
+  .sign .meta{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:5px;line-height:1.7}
+  .stamp{display:none;margin-top:12px;padding:13px;border-radius:12px;background:color-mix(in srgb,var(--ok) 12%,var(--surface));
+    border:1px solid color-mix(in srgb,var(--ok) 40%,var(--line))}
+  .stamp.show{display:block;animation:fade .3s ease}
+  .stamp .h{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--ok);font-size:13.5px}
+  .stamp .m{font-family:var(--mono);font-size:11px;color:var(--text-dim);margin-top:7px;line-height:1.7}
+  .endnote{text-align:center;font-family:var(--mono);font-size:11px;color:var(--text-faint);margin-top:16px;letter-spacing:.3px;line-height:1.6}
+
+  .empty{text-align:center;color:var(--text-faint);font-size:12.5px;padding:22px 10px;font-family:var(--mono)}
+  .caption{max-width:412px;color:#8ba1c0;font-size:11.5px;text-align:center;line-height:1.6;font-family:var(--mono);letter-spacing:.2px}
+  .caption a,.link{color:var(--brand-soft)}
+</style>
+
+<div class="stage">
+  <div class="rail">
+    <div class="brand">
+      <div class="glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9l8-5 8 5v11" stroke="#dce8f8" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><path d="M4 20h16M9 20v-6h6v6M12 4v3" stroke="#a9c4e6" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <h1>SEK Estructuras</h1>
+        <p>Prototipo navegable · v0.5</p>
+      </div>
+    </div>
+    <div class="rail-right">
+      <div class="legend" title="Escala de riesgo">
+        <b>RIESGO</b>
+        <span class="dot r1">1</span><span class="dot r2">2</span><span class="dot r3">3</span><span class="dot r4">4</span><span class="dot r5">5</span>
+      </div>
+      <button class="tbtn" id="themeBtn" type="button">☾ Tema</button>
+      <button class="tbtn" id="resetBtn" type="button">↺ Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="statusbar"><span class="notch"></span><span id="clock">09:41</span><span>Campo · sin señal ▲</span></div>
+    <div class="appbar">
+      <button class="back" id="backBtn" type="button" aria-label="Atrás" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="grow">
+        <div class="eyebrow" id="abEyebrow">Proyectos</div>
+        <h2 id="abTitle">Inspecciones</h2>
+      </div>
+      <span class="spacer"></span>
+      <span class="step-pill" id="abStep" style="display:none"></span>
+    </div>
+
+    <div class="scroll" id="scroll">
+
+      <!-- HOME -->
+      <section class="screen active" data-screen="home">
+        <p class="lead">Selecciona un proyecto para iniciar o continuar una inspección. Cada inspección produce un <b>entregable firmado</b>; lo que ocurra después con la reparación es externo a la app.</p>
+        <div class="sect">Proyectos activos</div>
+        <div class="card tap" onclick="go('project')">
+          <div class="row">
+            <div class="stripe" style="background:var(--brand)"></div>
+            <div class="grow">
+              <div class="title">Centro comercial — Torre A</div>
+              <div class="muted">6 módulos · última inspección hace 4 meses</div>
+              <div class="tags"><span class="tag">5 hallazgos abiertos</span><span class="tag norm">Tier 1</span></div>
+            </div>
+            <span class="chev">›</span>
+          </div>
+        </div>
+        <div class="card tap" onclick="go('project')">
+          <div class="row">
+            <div class="stripe" style="background:var(--brand-soft)"></div>
+            <div class="grow">
+              <div class="title">Edificio de oficinas — Bloque Norte</div>
+              <div class="muted">3 módulos · sin inspecciones</div>
+              <div class="tags"><span class="tag">Nuevo</span></div>
+            </div>
+            <span class="chev">›</span>
+          </div>
+        </div>
+        <div class="btnbar"><button class="btn ghost" type="button">+ Nuevo proyecto</button></div>
+      </section>
+
+      <!-- PROJECT / MODULES -->
+      <section class="screen" data-screen="project">
+        <p class="lead">Divide el proyecto en <b>módulos</b> para ordenar el recorrido. Inicia una inspección sobre un módulo.</p>
+        <div class="sect">Módulos</div>
+        <div class="card tap" onclick="go('safety')">
+          <div class="row"><div class="grow"><div class="title">M-01 · Cuarto de máquinas y sótano</div><div class="kv">GLP · eléctrico · cimentación</div></div><span class="chev">›</span></div>
+        </div>
+        <div class="card tap" onclick="go('safety')">
+          <div class="row"><div class="grow"><div class="title">M-02 · Food court y cubiertas</div><div class="kv">acceso en altura · estructura metálica</div></div><span class="chev">›</span></div>
+        </div>
+        <div class="card tap" onclick="go('safety')">
+          <div class="row"><div class="grow"><div class="title">M-03 · Locales pasillo B</div><div class="kv">áreas privativas</div></div><span class="chev">›</span></div>
+        </div>
+        <div class="btnbar"><button class="btn primary" type="button" onclick="go('safety')">Iniciar inspección · M-01</button></div>
+      </section>
+
+      <!-- SAFETY (ATS/EPP) -->
+      <section class="screen" data-screen="safety">
+        <div class="hint"><b>Antes de entrar.</b> Este eje de seguridad del inspector (ATS + EPP) es propio de un procedimiento de salud ocupacional y es obligatorio para iniciar el recorrido.</div>
+        <div id="safetyList"></div>
+        <div class="btnbar"><button class="btn primary" id="safetyGo" type="button" disabled onclick="go('inspection')">Comenzar recorrido</button></div>
+      </section>
+
+      <!-- INSPECTION (findings of current inspection) -->
+      <section class="screen" data-screen="inspection">
+        <p class="lead">Inspección en curso · <b>M-01</b>. Registra cada hallazgo con evidencia. Cuando termines, genera el entregable.</p>
+        <div class="row" style="justify-content:space-between;margin-bottom:10px">
+          <div class="sect" style="margin:0">Hallazgos <span id="hcount" class="kv"></span></div>
+          <button class="fchip" type="button" onclick="go('unevaluated')">No evaluados · <span id="unevCount">0</span></button>
+        </div>
+        <div id="findingList"></div>
+        <div class="btnbar">
+          <button class="btn ghost" type="button" onclick="startFinding()">+ Nuevo hallazgo</button>
+          <button class="btn primary" type="button" onclick="go('matrix')">Ver matriz · entregar resultados</button>
+        </div>
+      </section>
+
+      <!-- NEW FINDING -->
+      <section class="screen" data-screen="finding">
+        <label class="f"><span>Origen del hallazgo</span>
+          <div class="seg" id="origenSeg">
+            <button type="button" data-v="NORMADO" aria-pressed="false">Normado</button>
+            <button type="button" data-v="NO_NORMADO" aria-pressed="true">No normado · riesgo emergente</button>
+          </div>
+        </label>
+        <div class="hint" id="origenHint">Sin norma detrás: basta el <b>criterio profesional</b> para abrirlo. Igual recibe nivel de riesgo, foto y entra al entregable.</div>
+        <label class="f"><span>Tipo de elemento</span>
+          <div class="seg" id="tipoSeg">
+            <button type="button" data-v="ESTRUCTURAL" aria-pressed="true">Estructural</button>
+            <button type="button" data-v="NO_ESTRUCTURAL" aria-pressed="false">No estructural</button>
+          </div>
+        </label>
+        <label class="f"><span id="catLabel">Elemento estructural</span>
+          <select class="in" id="catSel"></select>
+        </label>
+        <label class="f"><span>Ubicación</span><input class="in" id="ubic" placeholder="Ej. Eje C-4, nivel sótano"></label>
+        <label class="f"><span>Descripción de la condición</span><textarea class="in" id="desc" placeholder="Qué se observó…"></textarea></label>
+        <label class="f"><span>Evidencia</span>
+          <button class="btn ghost" type="button" id="photoBtn" onclick="togglePhoto()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg>
+            <span id="photoTxt">Tomar fotografía</span>
+          </button>
+        </label>
+        <div class="btnbar"><button class="btn primary" type="button" id="toWizard" onclick="go('wizard')">Clasificar riesgo →</button></div>
+      </section>
+
+      <!-- RISK WIZARD -->
+      <section class="screen" data-screen="wizard">
+        <div class="hint"><b>Asistente de riesgo.</b> Tres preguntas calculan el nivel 1–5 con una matriz severidad × probabilidad. Aplica igual a hallazgos normados y no normados.</div>
+        <label class="f"><span>1 · Consecuencia sobre la vida humana</span>
+          <div class="seg wrap" id="sevSeg">
+            <button type="button" data-v="0">Inminente</button>
+            <button type="button" data-v="1">Crítica</button>
+            <button type="button" data-v="2">Moderada</button>
+            <button type="button" data-v="3">Menor</button>
+          </div>
+        </label>
+        <label class="f"><span>2 · Probabilidad de evolución / agravamiento</span>
+          <div class="seg" id="probSeg">
+            <button type="button" data-v="0">Baja</button>
+            <button type="button" data-v="1">Media</button>
+            <button type="button" data-v="2">Alta</button>
+          </div>
+        </label>
+        <label class="check warn" for="hardRule">
+          <input type="checkbox" id="hardRule">
+          <div><div class="t">Involucra gas, sistema contra incendios o riesgo de colapso</div><div class="d">Regla dura: si se marca, el resultado es nivel 5 automáticamente.</div></div>
+        </label>
+        <div id="riskResult"></div>
+        <div class="btnbar"><button class="btn primary" type="button" id="saveFinding" disabled onclick="saveFinding()">Guardar hallazgo</button></div>
+      </section>
+
+      <!-- UNEVALUATED -->
+      <section class="screen" data-screen="unevaluated">
+        <div class="hint"><b>Alcance real de la inspección.</b> Dejar constancia de lo que <b>no se pudo evaluar</b> y con qué medio se intentó. Tiene el mismo peso legal que un hallazgo: delimita de qué responde el informe.</div>
+        <div id="unevList"></div>
+        <div class="sect">Agregar elemento no evaluado</div>
+        <div class="card">
+          <label class="f"><span>Qué no se pudo evaluar</span><input class="in" id="unevDesc" placeholder="Ej. Cubierta metálica sobre food court"></label>
+          <label class="f"><span>Motivo</span>
+            <select class="in" id="unevMot"><option>Acceso restringido / altura</option><option>Cielo / acabado que impide ver</option><option>Iluminación o clima</option><option>Sin registros del elemento oculto</option><option>Otro</option></select>
+          </label>
+          <label class="f"><span>Medio intentado</span>
+            <select class="in" id="unevMedio"><option>Dron</option><option>Binoculares</option><option>Pértiga con cámara</option><option>Zoom óptico</option><option>Ninguno disponible</option></select>
+          </label>
+          <button class="btn ghost" type="button" onclick="addUnev()">+ Registrar</button>
+        </div>
+        <div class="btnbar"><button class="btn primary" type="button" onclick="go('inspection')">Volver a la inspección</button></div>
+      </section>
+
+      <!-- MATRIX -->
+      <section class="screen" data-screen="matrix">
+        <p class="lead">Matriz de hallazgos, ordenada por nivel de riesgo. En web se muestra como tabla; en campo, como tarjetas.</p>
+        <div class="filters" id="matrixFilters">
+          <button class="fchip" data-f="all" aria-pressed="true" type="button">Todos</button>
+          <button class="fchip" data-f="5" aria-pressed="false" type="button">5</button>
+          <button class="fchip" data-f="4" aria-pressed="false" type="button">4</button>
+          <button class="fchip" data-f="3" aria-pressed="false" type="button">3</button>
+          <button class="fchip" data-f="2" aria-pressed="false" type="button">2</button>
+          <button class="fchip" data-f="1" aria-pressed="false" type="button">1</button>
+        </div>
+        <div id="matrixList"></div>
+        <div class="btnbar"><button class="btn primary" type="button" onclick="go('report')">Generar entregable →</button></div>
+      </section>
+
+      <!-- REPORT / DELIVERABLE -->
+      <section class="screen" data-screen="report">
+        <p class="lead">El <b>entregable</b> es el clímax del producto: resultados en blanco y negro, firmados, en manos del encargado.</p>
+        <div class="sect">Resumen por nivel de riesgo</div>
+        <div class="sumbar" id="sumbar"></div>
+        <div class="counts" id="counts"></div>
+        <div class="sect">Contenido del informe</div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between"><div class="muted">Hallazgos registrados</div><b class="kv" id="rTot">0</b></div>
+          <div class="row" style="justify-content:space-between;margin-top:7px"><div class="muted">Elementos no evaluados</div><b class="kv" id="rUnev">0</b></div>
+          <div class="row" style="justify-content:space-between;margin-top:7px"><div class="muted">Evidencia fotográfica</div><b class="kv" id="rPhoto">0</b></div>
+        </div>
+        <div class="sect">Firma del profesional competente</div>
+        <div class="sign">
+          <div class="who">Ing. — Profesional responsable</div>
+          <div class="meta" id="signMeta">Colegiatura / registro: —<br>Sello de tiempo: —</div>
+        </div>
+        <div class="stamp" id="stamp">
+          <div class="h">✓ Informe emitido y entregado</div>
+          <div class="m" id="stampMeta"></div>
+        </div>
+        <div class="btnbar">
+          <button class="btn primary" id="emitBtn" type="button" onclick="emit()">Emitir informe firmado</button>
+        </div>
+        <div class="endnote">— La app entrega y se detiene aquí —<br>el seguimiento de la reparación es externo</div>
+      </section>
+
+    </div>
+  </div>
+
+  <p class="caption">Prototipo funcional de las pantallas del núcleo (v0.5). Toca las tarjetas para navegar. El asistente de riesgo calcula el nivel de verdad; el hallazgo que agregues aparece en la matriz y en el entregable.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  // ---------- data ----------
+  var CAT_NE = ["Sistema de protección a la vida","Materiales peligrosos","Particiones","Cielos arquitectónicos","Luminarias","Ventanería","Escaleras","Contenido y mobiliario","Equipo eléctrico y mecánico","Tuberías","Ductos"];
+  var CAT_E = ["Columna","Viga","Muro / cortante","Marco","Conexión / soldadura","Diafragma / entrepiso","Cimentación"];
+  var SEV_LABEL=["Inminente a la vida","Crítica","Moderada","Menor"];
+  var MATRIX=[[4,5,5],[3,4,4],[2,3,3],[1,1,2]];
+  var PLAZO={5:"Mitigación ≤ 72 h · reparación ≤ 3 meses",4:"Reparación ≤ 3 meses",3:"3 meses – 1 año",2:"3 meses – 1 año",1:"Según programación"};
+  var SAFETY=[
+    {t:"Análisis de Trabajo Seguro (ATS) realizado",d:"Peligros del área identificados y controlados."},
+    {t:"Equipo de protección personal (EPP) verificado",d:"Casco, calzado, guantes y protección según zona."},
+    {t:"Permisos de trabajo en altura / espacio confinado",d:"Requerido para cubiertas, mezanines y pasillos de servicio."},
+    {t:"Peligros eléctricos identificados",d:"Al inspeccionar cerca de instalaciones electromecánicas."}
+  ];
+
+  var seed=[
+    {num:"001",origen:"NO_NORMADO",tipo:"NO_ESTRUCTURAL",cat:"Tuberías",ubic:"Cuarto de máquinas, M-01",desc:"Fuga en tubería de GLP; olor persistente.",nivel:5,foto:true},
+    {num:"002",origen:"NORMADO",tipo:"ESTRUCTURAL",cat:"Columna",ubic:"Eje C-4, sótano",desc:"Fisura diagonal ~2 mm en columna.",nivel:4,foto:true},
+    {num:"003",origen:"NORMADO",tipo:"NO_ESTRUCTURAL",cat:"Luminarias",ubic:"Pasillo central N2",desc:"Luminaria suspendida sin anclaje secundario.",nivel:3,foto:true},
+    {num:"004",origen:"NO_NORMADO",tipo:"ESTRUCTURAL",cat:"Conexión / soldadura",ubic:"Escalera de servicio E-2",desc:"Corrosión leve en placa base.",nivel:2,foto:false},
+    {num:"005",origen:"NORMADO",tipo:"NO_ESTRUCTURAL",cat:"Contenido y mobiliario",ubic:"Local 118",desc:"Rótulo interior con fijación holgada.",nivel:1,foto:true}
+  ];
+  var state={};
+  function reset(){
+    state={
+      findings: seed.map(function(f){return Object.assign({},f);}),
+      unev:[{desc:"Cubierta metálica sobre food court",mot:"Acceso restringido / altura",medio:"Dron"},
+            {desc:"Vigas sobre cielo falso, pasillo B",mot:"Cielo / acabado que impide ver",medio:"Ninguno disponible"}],
+      safety:[false,false,false,false],
+      draft:null, filter:"all", emitted:false
+    };
+  }
+  reset();
+
+  // ---------- router ----------
+  var TITLES={
+    home:["Proyectos","Inspecciones",null],
+    project:["Proyecto","Centro comercial · Torre A",null],
+    safety:["Inspección · M-01","Seguridad del inspector","Paso 1"],
+    inspection:["Inspección · M-01","Hallazgos",null],
+    finding:["Nuevo hallazgo","Registrar","Paso 2"],
+    wizard:["Nuevo hallazgo","Clasificar riesgo","Paso 3"],
+    unevaluated:["Inspección · M-01","No evaluados",null],
+    matrix:["Resultados","Matriz de hallazgos",null],
+    report:["Resultados","Entregable",null]
+  };
+  var stack=["home"];
+  function render(){
+    var cur=stack[stack.length-1];
+    document.querySelectorAll(".screen").forEach(function(s){s.classList.toggle("active",s.dataset.screen===cur);});
+    var t=TITLES[cur]||["",""];
+    document.getElementById("abEyebrow").textContent=t[0];
+    document.getElementById("abTitle").textContent=t[1];
+    var step=document.getElementById("abStep");
+    if(t[2]){step.style.display="";step.textContent=t[2];}else{step.style.display="none";}
+    document.getElementById("backBtn").style.display=stack.length>1?"grid":"none";
+    document.getElementById("scroll").scrollTop=0;
+    if(cur==="safety")renderSafety();
+    if(cur==="inspection")renderFindings();
+    if(cur==="unevaluated")renderUnev();
+    if(cur==="matrix")renderMatrix();
+    if(cur==="report")renderReport();
+    if(cur==="finding")syncFindingForm();
+    if(cur==="wizard")renderRisk();
+  }
+  window.go=function(s){ if(stack[stack.length-1]!==s)stack.push(s); render(); };
+  document.getElementById("backBtn").onclick=function(){ if(stack.length>1)stack.pop(); render(); };
+
+  // ---------- components ----------
+  function meter(n){var b="";for(var i=1;i<=5;i++)b+='<i style="background:'+(i<=n?"var(--risk-"+n+")":"var(--line-strong)")+'"></i>';return '<div class="meter">'+b+'</div>';}
+  function badge(n){return '<div class="badge r'+n+'">'+n+'</div>';}
+  function riskCluster(n){return '<div class="risk">'+meter(n)+badge(n)+'</div>';}
+  function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+  function originTag(o){return o==="NORMADO"?'<span class="tag norm">◆ Normado</span>':'<span class="tag">◇ No normado</span>';}
+
+  // ---------- safety ----------
+  function renderSafety(){
+    var el=document.getElementById("safetyList");
+    el.innerHTML=SAFETY.map(function(s,i){
+      return '<label class="check" for="sf'+i+'"><input type="checkbox" id="sf'+i+'" data-i="'+i+'" '+(state.safety[i]?"checked":"")+'><div><div class="t">'+s.t+'</div><div class="d">'+s.d+'</div></div></label>';
+    }).join("");
+    el.querySelectorAll("input").forEach(function(c){c.onchange=function(){state.safety[+c.dataset.i]=c.checked;updateSafetyBtn();};});
+    updateSafetyBtn();
+  }
+  function updateSafetyBtn(){document.getElementById("safetyGo").disabled=!state.safety.every(Boolean);}
+
+  // ---------- findings list ----------
+  function renderFindings(){
+    document.getElementById("hcount").textContent="· "+state.findings.length;
+    document.getElementById("unevCount").textContent=state.unev.length;
+    var el=document.getElementById("findingList");
+    var arr=state.findings.slice().sort(function(a,b){return b.nivel-a.nivel;});
+    el.innerHTML=arr.map(function(f){
+      return '<div class="card"><div class="row"><div class="stripe" style="background:var(--risk-'+f.nivel+')"></div>'+
+        '<div class="grow"><div class="row" style="gap:8px"><span class="kv">#'+f.num+'</span>'+originTag(f.origen)+(f.foto?'':'<span class="tag" style="color:var(--risk-4)">sin foto</span>')+'</div>'+
+        '<div class="title" style="margin-top:5px">'+esc(f.desc)+'</div><div class="muted">'+esc(f.ubic)+' · '+esc(f.cat)+'</div></div>'+
+        riskCluster(f.nivel)+'</div></div>';
+    }).join("");
+  }
+
+  // ---------- new finding form ----------
+  window.startFinding=function(){ state.draft={origen:"NO_NORMADO",tipo:"ESTRUCTURAL",cat:CAT_E[0],ubic:"",desc:"",foto:false,sev:null,prob:null,hard:false,nivel:null}; go("finding"); };
+  function seg(id,val,cb){
+    document.querySelectorAll("#"+id+" button").forEach(function(b){
+      b.setAttribute("aria-pressed", b.dataset.v===String(val));
+      b.onclick=function(){cb(b.dataset.v);};
+    });
+  }
+  function syncFindingForm(){
+    var d=state.draft; if(!d){startFinding();return;}
+    seg("origenSeg",d.origen,function(v){d.origen=v;document.getElementById("origenHint").style.display=v==="NO_NORMADO"?"":"none";syncFindingForm();});
+    document.getElementById("origenHint").style.display=d.origen==="NO_NORMADO"?"":"none";
+    seg("tipoSeg",d.tipo,function(v){d.tipo=v;d.cat=(v==="ESTRUCTURAL"?CAT_E:CAT_NE)[0];syncFindingForm();});
+    document.getElementById("catLabel").textContent=d.tipo==="ESTRUCTURAL"?"Elemento estructural":"Categoría no estructural";
+    var sel=document.getElementById("catSel");var list=d.tipo==="ESTRUCTURAL"?CAT_E:CAT_NE;
+    sel.innerHTML=list.map(function(c){return '<option'+(c===d.cat?" selected":"")+'>'+c+'</option>';}).join("");
+    sel.onchange=function(){d.cat=sel.value;};
+    var u=document.getElementById("ubic");u.value=d.ubic;u.oninput=function(){d.ubic=u.value;};
+    var de=document.getElementById("desc");de.value=d.desc;de.oninput=function(){d.desc=de.value;};
+    document.getElementById("photoTxt").textContent=d.foto?"Fotografía adjunta ✓":"Tomar fotografía";
+  }
+  window.togglePhoto=function(){state.draft.foto=!state.draft.foto;document.getElementById("photoTxt").textContent=state.draft.foto?"Fotografía adjunta ✓":"Tomar fotografía";};
+
+  // ---------- risk wizard ----------
+  function renderRisk(){
+    var d=state.draft;
+    seg("sevSeg",d.sev,function(v){d.sev=+v;renderRisk();});
+    seg("probSeg",d.prob,function(v){d.prob=+v;renderRisk();});
+    var hr=document.getElementById("hardRule");hr.checked=!!d.hard;
+    hr.onchange=function(){d.hard=hr.checked;renderRisk();};
+    var n=computeRisk(d);d.nivel=n;
+    var box=document.getElementById("riskResult");
+    if(n){
+      box.innerHTML='<div class="result r'+n+'"><div class="n">'+n+'</div><div class="lbl">'+(n>=4?"Crítico":n>=2?"Moderado":"Menor")+'</div><div class="plazo">'+PLAZO[n]+'</div></div>';
+    }else{
+      box.innerHTML='<div class="empty">Responde severidad y probabilidad para calcular el nivel.</div>';
+    }
+    document.getElementById("saveFinding").disabled=!n||!d.desc;
+  }
+  function computeRisk(d){ if(d.hard)return 5; if(d.sev===null||d.prob===null)return null; return MATRIX[d.sev][d.prob]; }
+  window.saveFinding=function(){
+    var d=state.draft; var n=String(state.findings.length+1);
+    state.findings.push({num:("00"+n).slice(-3),origen:d.origen,tipo:d.tipo,cat:d.cat,ubic:d.ubic||"—",desc:d.desc||"(sin descripción)",nivel:d.nivel,foto:d.foto});
+    state.draft=null; state.emitted=false;
+    stack=stack.filter(function(s){return s!=="finding"&&s!=="wizard";});
+    render();
+  };
+
+  // ---------- unevaluated ----------
+  function renderUnev(){
+    var el=document.getElementById("unevList");
+    el.innerHTML=state.unev.length?state.unev.map(function(u){
+      return '<div class="card"><div class="title">'+esc(u.desc)+'</div><div class="tags"><span class="tag">'+esc(u.mot)+'</span><span class="tag norm">Medio: '+esc(u.medio)+'</span></div></div>';
+    }).join(""):'<div class="empty">Sin elementos no evaluados aún.</div>';
+  }
+  window.addUnev=function(){
+    var d=document.getElementById("unevDesc"); if(!d.value.trim())return;
+    state.unev.push({desc:d.value.trim(),mot:document.getElementById("unevMot").value,medio:document.getElementById("unevMedio").value});
+    d.value=""; state.emitted=false; renderUnev();
+  };
+
+  // ---------- matrix ----------
+  function renderMatrix(){
+    document.querySelectorAll("#matrixFilters .fchip").forEach(function(c){
+      c.setAttribute("aria-pressed",c.dataset.f===state.filter);
+      c.onclick=function(){state.filter=c.dataset.f;renderMatrix();};
+    });
+    var el=document.getElementById("matrixList");
+    var arr=state.findings.slice().sort(function(a,b){return b.nivel-a.nivel;});
+    if(state.filter!=="all")arr=arr.filter(function(f){return String(f.nivel)===state.filter;});
+    el.innerHTML=arr.length?arr.map(function(f){
+      return '<div class="card"><div class="row"><div class="stripe" style="background:var(--risk-'+f.nivel+')"></div>'+
+        '<div class="grow"><div class="row" style="gap:8px"><span class="kv">#'+f.num+'</span>'+originTag(f.origen)+'</div>'+
+        '<div class="title" style="margin-top:5px">'+esc(f.desc)+'</div><div class="muted">'+esc(f.ubic)+'</div>'+
+        '<div class="kv" style="margin-top:6px">Plazo sugerido · '+PLAZO[f.nivel]+'</div></div>'+riskCluster(f.nivel)+'</div></div>';
+    }).join(""):'<div class="empty">Sin hallazgos en este nivel.</div>';
+  }
+
+  // ---------- report ----------
+  function counts(){var c={1:0,2:0,3:0,4:0,5:0};state.findings.forEach(function(f){c[f.nivel]++;});return c;}
+  function renderReport(){
+    var c=counts(),tot=state.findings.length;
+    var bar=document.getElementById("sumbar");
+    bar.innerHTML=[5,4,3,2,1].map(function(n){var w=tot?(c[n]/tot*100):0;return w?'<span style="width:'+w+'%;background:var(--risk-'+n+')" title="Nivel '+n+': '+c[n]+'"></span>':"";}).join("")||'<span style="width:100%;background:var(--line)"></span>';
+    document.getElementById("counts").innerHTML=[5,4,3,2,1].map(function(n){
+      return '<div class="cnt"><div class="b r'+n+'">'+n+'</div><div class="v">'+c[n]+'</div><div class="k">niv '+n+'</div></div>';
+    }).join("");
+    document.getElementById("rTot").textContent=tot;
+    document.getElementById("rUnev").textContent=state.unev.length;
+    document.getElementById("rPhoto").textContent=state.findings.filter(function(f){return f.foto;}).length+" / "+tot;
+    var st=document.getElementById("stamp"),eb=document.getElementById("emitBtn");
+    if(state.emitted){st.classList.add("show");eb.disabled=true;eb.textContent="Informe emitido ✓";}
+    else{st.classList.remove("show");eb.disabled=false;eb.textContent="Emitir informe firmado";
+      document.getElementById("signMeta").innerHTML="Colegiatura / registro: —<br>Sello de tiempo: —";}
+  }
+  window.emit=function(){
+    state.emitted=true;
+    var now=new Date();
+    var ts=now.toLocaleString("es-CR",{dateStyle:"medium",timeStyle:"short"});
+    var reg="CFR-"+(10000+Math.floor(Math.random()*89999));
+    document.getElementById("signMeta").innerHTML="Colegiatura / registro: <b style='color:var(--text)'>"+reg+"</b><br>Sello de tiempo: "+ts;
+    document.getElementById("stampMeta").innerHTML="Entregado a: Administración · Torre A<br>Registro inmutable · "+ts+"<br>Cadena de custodia activa";
+    renderReport();
+  };
+
+  // ---------- chrome ----------
+  document.getElementById("resetBtn").onclick=function(){reset();stack=["home"];render();};
+  var root=document.documentElement;
+  document.getElementById("themeBtn").onclick=function(){
+    var cur=root.getAttribute("data-theme");
+    var next=cur==="dark"?"light":cur==="light"?"dark":(matchMedia("(prefers-color-scheme: dark)").matches?"light":"dark");
+    root.setAttribute("data-theme",next);
+    this.textContent=(next==="dark"?"☀ Tema":"☾ Tema");
+  };
+  (function(){var d=new Date();document.getElementById("clock").textContent=("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);})();
+
+  render();
+})();
+</script>
