@@ -137,3 +137,21 @@ La **regla dura** no cambia: gas / contra incendios / colapso → nivel 5 autom�
 *(Ninguno de estos cambios toca la frontera del producto ni el modelo de datos de fondo: son refinamientos de captura sobre lo ya diseñado.)*
 
 > **Estado: APLICADO al prototipo (v0.6)** — los 6 cambios están implementados y verificados en navegador real (tema claro y oscuro).
+
+---
+
+## 7. Adenda — síntomas múltiples con prioridad definida por la app *(aplicada)*
+
+En campo los síntomas rara vez vienen solos, y sus **combinaciones son oro diagnóstico** (desprendimiento + acero expuesto + óxido = corrosión activa del refuerzo). Por eso:
+
+1. **Selección múltiple:** el inspector marca **todos** los síntomas que ve en el mismo punto.
+2. **La prioridad la fija la app, no el orden de clic.** El síntoma *principal* (el que aparece en la matriz y ordena el reporte) se determina por un **ranking técnico fijo** definido por el profesional competente:
+
+   > Deformación/pandeo → Asentamiento → Fisura → Acero expuesto → Desprendimiento → Suelto/mal anclado → Impacto → Corrosión → Modificación no autorizada → Faltante → Humedad → Otro
+
+   *(Racional: primero lo que indica inestabilidad en curso, luego pérdida de sección, luego condiciones ambientales/administrativas. Ranking calibrable con la dirección técnica.)*
+3. **Combinaciones delatoras codificadas:** si el conjunto marcado coincide con un patrón de deterioro activo, el asistente lo avisa y sugiere valorar probabilidad Alta — sin quitarle la decisión al inspector:
+   - Fisura + deformación → compromiso estructural en curso
+   - Acero expuesto + óxido → corrosión activa del refuerzo
+   - Desprendimiento + acero expuesto → pérdida de recubrimiento
+4. **Multi-síntoma ≠ multi-problema:** la regla *un hallazgo = una condición* se protege con la guía visible en pantalla: *"¿Ves dos problemas distintos? Regístralos como dos hallazgos."*

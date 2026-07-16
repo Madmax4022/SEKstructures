@@ -399,9 +399,10 @@
         <label class="f"><span id="catLabel">Elemento estructural</span>
           <select class="in" id="catSel"></select>
         </label>
-        <label class="f"><span>Síntoma observable <em class="req">obligatorio</em></span>
+        <label class="f"><span>Síntomas observables — marca todos los que veas <em class="req">obligatorio</em></span>
           <div class="opts sym" id="symSeg"></div>
         </label>
+        <div class="hint" id="symInfo" style="display:none"></div>
         <div id="medidaBox" style="display:none">
           <label class="f"><span>Medida guiada — ¿qué entra en la fisura?</span>
             <div class="opts duo" id="medSeg">
@@ -598,6 +599,15 @@
     {k:"otro",t:"Otro",svg:'<circle cx="6" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.3" fill="currentColor" stroke="none"/>'}
   ];
   var SYM_LABEL={};SYMPTOMS.forEach(function(s){SYM_LABEL[s.k]=s.t;});
+  // prioridad técnica fija (definida por el profesional competente, no por el orden de clic)
+  var SYM_PRIORITY=["pandeo","asenta","fisura","acero","desprend","suelto","impacto","oxido","modif","faltante","humedad","otro"];
+  function sortSym(keys){return keys.slice().sort(function(a,b){return SYM_PRIORITY.indexOf(a)-SYM_PRIORITY.indexOf(b);});}
+  // combinaciones que delatan deterioro activo
+  var SYM_COMBOS=[
+    {req:["fisura","pandeo"],msg:"Fisura + deformación suele indicar compromiso estructural en curso"},
+    {req:["acero","oxido"],msg:"Acero expuesto + óxido indica corrosión activa del refuerzo"},
+    {req:["desprend","acero"],msg:"Desprendimiento + acero expuesto indica pérdida de recubrimiento (deterioro activo)"}
+  ];
   var MATRIX=[[4,5,5],[3,4,4],[2,3,3],[1,1,2]];
   var PLAZO={5:"Mitigación ≤ 72 h · reparación ≤ 3 meses",4:"Reparación ≤ 3 meses",3:"3 meses – 1 año",2:"3 meses – 1 año",1:"Según programación"};
   var SAFETY=[
@@ -611,7 +621,7 @@
     project:{t:"Módulos",w:"El edificio se divide en módulos para ordenar el recorrido.",s:["Toca un módulo para inspeccionarlo.","O usa «Iniciar inspección» para arrancar por el primero."]},
     safety:{t:"Seguridad del inspector",w:"Antes de entrar confirmas tu propia seguridad. Es obligatorio.",s:["Marca cada casilla (ATS, EPP, permisos, peligros eléctricos).","El botón «Comenzar recorrido» se activa cuando marcas todo."]},
     inspection:{t:"Hallazgos de la inspección",w:"El recorrido en curso. Aquí se acumula lo que vas encontrando.",s:["Usa «+ Nuevo hallazgo» para registrar uno.","Registra lo que no pudiste ver en «No evaluados».","Al terminar, «Ver matriz» para entregar resultados."]},
-    finding:{t:"Registrar un hallazgo",w:"Describe lo que VES, no lo que crees que significa. El diagnóstico es del ingeniero.",s:["Elige el origen (normado / no normado) y el tipo de elemento.","Elige el síntoma observable en el catálogo (fisura, óxido, suelto…).","Si es fisura, usa la medida guiada: ¿entra una tarjeta, una moneda, un dedo?","Escribe ubicación y descripción, adjunta foto.","Toca «Clasificar riesgo»."]},
+    finding:{t:"Registrar un hallazgo",w:"Describe lo que VES, no lo que crees que significa. El diagnóstico es del ingeniero.",s:["Elige el origen (normado / no normado) y el tipo de elemento.","Marca TODOS los síntomas que veas — la app decide cuál es el principal, sin importar el orden en que los toques.","Si hay fisura, usa la medida guiada: ¿entra una tarjeta, una moneda, un dedo?","¿Dos problemas distintos? Regístralos como dos hallazgos.","Escribe ubicación y descripción, adjunta foto, y toca «Clasificar riesgo»."]},
     wizard:{t:"Asistente de riesgo",w:"El nivel 1–5 no lo pones a mano: lo calcula la app. Ante la duda, marca el mayor.",s:["¿Qué pasaría si esto falla ahora? (severidad)","¿Hay señales de que está avanzando? (con indicios en sitio)","Gas, incendio o colapso → nivel 5 automático y vía rápida: mitiga primero.","En nivel 4 la app pide 5 datos extra para el ingeniero.","Guarda cuando tengas el nivel."]},
     unevaluated:{t:"Elementos no evaluados",w:"Dejas constancia de lo que NO pudiste inspeccionar. Define el alcance real del informe.",s:["Describe qué no se pudo evaluar.","Indica el motivo y el medio que intentaste (dron, pértiga…).","Toca «+ Registrar»."]},
     matrix:{t:"Matriz de hallazgos",w:"Todos los hallazgos juntos, ordenados por riesgo.",s:["Usa los filtros para ver solo un nivel.","Revisa el plazo sugerido de cada hallazgo.","«Generar entregable» cuando esté completo."]},
@@ -699,12 +709,12 @@
     el.innerHTML=arr.map(function(f){
       return '<div class="card"><div class="row"><div class="stripe" style="background:var(--risk-'+f.nivel+')"></div>'+
         '<div class="grow"><div class="row" style="gap:8px"><span class="kv">#'+f.num+'</span>'+originTag(f.origen)+(f.foto?'':'<span class="tag" style="color:var(--risk-4)">sin foto</span>')+'</div>'+
-        '<div class="title" style="margin-top:6px">'+esc(f.desc)+'</div><div class="muted">'+esc(f.ubic)+' · '+esc(f.cat)+(f.sintoma?' · '+esc(f.sintoma):'')+(f.medida?' ('+esc(f.medida)+')':'')+'</div></div>'+
+        '<div class="title" style="margin-top:6px">'+esc(f.desc)+'</div><div class="muted">'+esc(f.ubic)+' · '+esc(f.cat)+(f.sintoma?' · '+esc(f.sintoma):'')+(f.sintomasAll&&f.sintomasAll.length>1?' <b>+'+(f.sintomasAll.length-1)+'</b>':'')+(f.medida?' ('+esc(f.medida)+')':'')+'</div></div>'+
         riskCluster(f.nivel)+'</div></div>';
     }).join("");
   }
 
-  document.getElementById("newFindingBtn").onclick=function(){ state.draft={origen:"NO_NORMADO",tipo:"ESTRUCTURAL",cat:CAT_E[0],sintoma:null,medida:null,ubic:"",desc:"",foto:false,sev:null,prob:null,hard:false,nivel:null,vertical:[false,false,false,false,false]}; go("finding"); };
+  document.getElementById("newFindingBtn").onclick=function(){ state.draft={origen:"NO_NORMADO",tipo:"ESTRUCTURAL",cat:CAT_E[0],sintomas:[],medida:null,ubic:"",desc:"",foto:false,sev:null,prob:null,hard:false,nivel:null,vertical:[false,false,false,false,false]}; go("finding"); };
   function seg(id,val,cb){
     document.querySelectorAll("#"+id+" button").forEach(function(b){
       b.setAttribute("aria-pressed", b.dataset.v===String(val));
@@ -720,14 +730,33 @@
     var sel=document.getElementById("catSel");var list=d.tipo==="ESTRUCTURAL"?CAT_E:CAT_NE;
     sel.innerHTML=list.map(function(c){return '<option'+(c===d.cat?" selected":"")+'>'+c+'</option>';}).join("");
     sel.onchange=function(){d.cat=sel.value;};
-    seg("symSeg",d.sintoma,function(v){d.sintoma=v;if(v!=="fisura")d.medida=null;syncFindingForm();});
-    document.getElementById("medidaBox").style.display=d.sintoma==="fisura"?"":"none";
+    // síntomas: selección múltiple; la prioridad la ordena la app, no el orden de clic
+    document.querySelectorAll("#symSeg .opt").forEach(function(b){
+      b.setAttribute("aria-pressed", d.sintomas.indexOf(b.dataset.v)>=0?"true":"false");
+      b.onclick=function(){
+        var i=d.sintomas.indexOf(b.dataset.v);
+        if(i>=0)d.sintomas.splice(i,1); else d.sintomas.push(b.dataset.v);
+        if(d.sintomas.indexOf("fisura")<0)d.medida=null;
+        syncFindingForm();
+      };
+    });
+    var ordered=sortSym(d.sintomas);
+    var info=document.getElementById("symInfo");
+    if(!ordered.length){info.style.display="none";}
+    else{
+      info.style.display="";
+      var pr= ordered.length>1
+        ? "Principal <b>(lo ordena la app)</b>: <b>"+SYM_LABEL[ordered[0]]+"</b> · también: "+ordered.slice(1).map(function(k){return SYM_LABEL[k];}).join(", ")+"<br>"
+        : "";
+      info.innerHTML=pr+"¿Ves dos problemas distintos? Regístralos como <b>dos hallazgos</b>.";
+    }
+    document.getElementById("medidaBox").style.display=d.sintomas.indexOf("fisura")>=0?"":"none";
     seg("medSeg",d.medida,function(v){d.medida=v;syncFindingForm();});
     var u=document.getElementById("ubic");u.value=d.ubic;u.oninput=function(){d.ubic=u.value;};
     var de=document.getElementById("desc");de.value=d.desc;
     var tw=document.getElementById("toWizardBtn"),twn=document.getElementById("toWizardNote");
-    function upd(){var ok=!!de.value.trim()&&!!d.sintoma;tw.disabled=!ok;twn.style.display=ok?"none":"block";
-      twn.textContent=!d.sintoma?"Elige el síntoma observable para continuar.":"Escribe una descripción para continuar.";}
+    function upd(){var ok=!!de.value.trim()&&d.sintomas.length>0;tw.disabled=!ok;twn.style.display=ok?"none":"block";
+      twn.textContent=!d.sintomas.length?"Marca al menos un síntoma para continuar.":"Escribe una descripción para continuar.";}
     de.oninput=function(){d.desc=de.value;upd();};
     upd();
     document.getElementById("photoTxt").textContent=d.foto?"Fotografía adjunta ✓":"Tomar fotografía";
@@ -741,14 +770,19 @@
     var hr=document.getElementById("hardRule");hr.checked=!!d.hard;hr.onchange=function(){d.hard=hr.checked;renderRisk();};
     var n=computeRisk(d);d.nivel=n;
     var box=document.getElementById("riskResult");
+    var combo='';
+    SYM_COMBOS.forEach(function(c){
+      if(c.req.every(function(k){return (d.sintomas||[]).indexOf(k)>=0;}))
+        combo+='<div class="hint" style="margin-top:10px"><b>Combinación de síntomas:</b> '+c.msg+' — valora probabilidad <b>Alta</b>.</div>';
+    });
     if(n){
       var extra='';
       if(n===5){extra='<div class="hint warn" style="margin-top:10px"><b>Vía rápida nivel 5 — mitiga primero.</b> Acordonar, restringir acceso, cerrar válvulas si aplica, y notificar a la dirección técnica. El registro se completa después; no dejes el formulario entre tú y la mitigación.</div>';}
       if(n>=4){extra+='<p class="tipline" style="margin-top:8px">Se marcará <b>«requiere evaluación de ingeniero estructural»</b></p>';}
       var note=(!d.desc)?'<p class="note">Falta la descripción (paso anterior) para poder guardar.</p>':'';
-      box.innerHTML='<div class="result r'+n+'"><div class="n">'+n+'</div><div class="lbl">'+(n>=4?"Crítico":n>=2?"Moderado":"Menor")+'</div><div class="plazo">'+PLAZO[n]+'</div></div>'+extra+note;
+      box.innerHTML=combo+'<div class="result r'+n+'"><div class="n">'+n+'</div><div class="lbl">'+(n>=4?"Crítico":n>=2?"Moderado":"Menor")+'</div><div class="plazo">'+PLAZO[n]+'</div></div>'+extra+note;
     }else{
-      box.innerHTML='<div class="empty">Responde severidad y probabilidad para calcular el nivel.</div>';
+      box.innerHTML=combo+'<div class="empty">Responde severidad y probabilidad para calcular el nivel.</div>';
     }
     document.getElementById("verticalBox").style.display=(n===4)?"":"none";
     for(var i=0;i<5;i++){(function(i){
@@ -763,7 +797,8 @@
   function computeRisk(d){ if(d.hard)return 5; if(d.sev===null||d.prob===null)return null; return MATRIX[d.sev][d.prob]; }
   document.getElementById("saveFinding").onclick=function(){
     var d=state.draft; var num=("00"+(state.findings.length+1)).slice(-3);
-    state.findings.push({num:num,origen:d.origen,tipo:d.tipo,cat:d.cat,sintoma:SYM_LABEL[d.sintoma]||d.sintoma,medida:d.medida,ubic:d.ubic||"—",desc:d.desc||"(sin descripción)",nivel:d.nivel,foto:d.foto,reqIng:d.nivel>=4,vertical:d.vertical.slice()});
+    var ord=sortSym(d.sintomas).map(function(k){return SYM_LABEL[k];});
+    state.findings.push({num:num,origen:d.origen,tipo:d.tipo,cat:d.cat,sintoma:ord[0]||"",sintomasAll:ord,medida:d.medida,ubic:d.ubic||"—",desc:d.desc||"(sin descripción)",nivel:d.nivel,foto:d.foto,reqIng:d.nivel>=4,vertical:d.vertical.slice()});
     state.draft=null; state.emitted=false;
     stack=stack.filter(function(s){return s!=="finding"&&s!=="wizard";});
     render();
