@@ -13,6 +13,7 @@ En fase de definición del concepto. El código aún no comienza.
 - [`docs/01-concepto-app.md`](docs/01-concepto-app.md) — Concepto y especificación del producto (**v0.6**): principio rector 80/20, **frontera de alcance** (dentro / fuera), norma abierta, alcance del MVP, flujo, modelo de datos y reglas de negocio. Las adiciones de la revisión de tres perfiles van en negrita, con trazabilidad al final.
 - [`docs/02-plan-tecnico.md`](docs/02-plan-tecnico.md) — Plan técnico y hoja de ruta (**v1**): stack recomendado (PWA + Supabase), piezas, etapas de construcción del MVP, costo/riesgo y decisiones pendientes.
 - [`docs/03-compliance-origen.md`](docs/03-compliance-origen.md) — Auditoría de compliance contra los documentos originales: matriz de 41 requisitos (cumple / mejora / parcial / referencia / excluido por decisión / pendiente), balance y propuestas para cerrar la brecha de seguimiento sin romper la frontera del producto.
+- [`docs/04-criterio-captura-tier1.md`](docs/04-criterio-captura-tier1.md) — Dictamen técnico del profesional competente: criterio de captura en Tier 1 (cribado, no diagnóstico), lenguaje de dos capas con escalamiento vertical por severidad, catálogo de síntomas observables, matriz calibrada en lenguaje SYSO y sesgo conservador. Resuelve las decisiones pendientes de subcategorías y calibración.
 - [`prototype/index.html`](prototype/index.html) — Prototipo navegable del núcleo (v0.6).
 
 ## El ciclo que digitaliza la app
