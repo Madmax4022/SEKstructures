@@ -248,6 +248,11 @@
   .sheet-steps li{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;line-height:1.5}
   .sheet-steps .num{flex:0 0 26px;width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;font-family:var(--mono);font-weight:700;
     font-size:13px;display:grid;place-items:center;margin-top:1px}
+  .sheet-legend{margin-top:18px;padding-top:15px;border-top:1px solid var(--line)}
+  .leggrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:9px}
+  .legitem{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+  .legitem .sq{width:34px;height:34px;border-radius:9px;color:#fff;font-family:var(--mono);font-weight:700;display:grid;place-items:center;font-size:15px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}
+  .legitem small{font-size:11px;color:var(--text-dim);line-height:1.2;font-family:var(--mono);letter-spacing:.2px}
 </style>
 
 <div class="stage">
@@ -259,10 +264,6 @@
       <h1>SEK Estructuras <span class="ver">Prototipo · v0.5</span></h1>
     </div>
     <div class="rail-right">
-      <div class="legend" title="Escala de riesgo">
-        <b>RIESGO</b>
-        <span class="dot r1">1</span><span class="dot r2">2</span><span class="dot r3">3</span><span class="dot r4">4</span><span class="dot r5">5</span>
-      </div>
       <button class="iconctl" id="themeBtn" type="button" aria-label="Cambiar entre tema claro y oscuro" title="Tema claro/oscuro">☾</button>
       <button class="iconctl" id="resetBtn" type="button" aria-label="Reiniciar la demostración" title="Reiniciar">↺</button>
     </div>
@@ -511,6 +512,16 @@
         </div>
         <p class="sheet-what" id="helpWhat"></p>
         <ol class="sheet-steps" id="helpSteps"></ol>
+        <div class="sheet-legend">
+          <div class="sheet-eyebrow">Escala de riesgo</div>
+          <div class="leggrid">
+            <div class="legitem"><span class="sq r5">5</span><small>Inminente</small></div>
+            <div class="legitem"><span class="sq r4">4</span><small>Crítico</small></div>
+            <div class="legitem"><span class="sq r3">3</span><small>Moderado</small></div>
+            <div class="legitem"><span class="sq r2">2</span><small>Leve</small></div>
+            <div class="legitem"><span class="sq r1">1</span><small>Menor</small></div>
+          </div>
+        </div>
       </div>
     </div>
 
