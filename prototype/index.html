@@ -154,6 +154,7 @@
   .opts{display:grid;gap:9px;margin-top:2px}
   .opts.sev{grid-template-columns:repeat(2,1fr)}
   .opts.prob{grid-template-columns:repeat(3,1fr)}
+  .opts.duo{grid-template-columns:repeat(2,1fr)}
   .opt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:96px;padding:14px 8px;
     border-radius:15px;border:1px solid var(--line-strong);background:var(--surface);color:var(--text-dim);cursor:pointer;
     font-family:var(--sans);font-size:15px;font-weight:600;line-height:1.15;text-align:center;transition:.12s}
@@ -331,16 +332,28 @@
       <!-- NEW FINDING -->
       <section class="screen" data-screen="finding">
         <label class="f"><span>Origen del hallazgo</span>
-          <div class="seg" id="origenSeg">
-            <button type="button" data-v="NORMADO" aria-pressed="false">Normado</button>
-            <button type="button" data-v="NO_NORMADO" aria-pressed="true">No normado</button>
+          <div class="opts duo" id="origenSeg">
+            <button type="button" class="opt" data-v="NORMADO" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M8.5 13.5l2 2 4-4" stroke-linecap="round"/></svg>
+              <span>Normado</span>
+            </button>
+            <button type="button" class="opt" data-v="NO_NORMADO" aria-pressed="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span>No normado</span>
+            </button>
           </div>
         </label>
         <div class="hint" id="origenHint">Sin norma detrás: basta el <b>criterio profesional</b> para abrirlo. Igual recibe nivel de riesgo, foto y entra al entregable.</div>
         <label class="f"><span>Tipo de elemento</span>
-          <div class="seg" id="tipoSeg">
-            <button type="button" data-v="ESTRUCTURAL" aria-pressed="true">Estructural</button>
-            <button type="button" data-v="NO_ESTRUCTURAL" aria-pressed="false">No estructural</button>
+          <div class="opts duo" id="tipoSeg">
+            <button type="button" class="opt" data-v="ESTRUCTURAL" aria-pressed="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 21V6l8-3 8 3v15"/><path d="M4 21h16M9 21v-8h6v8M12 3v3"/></svg>
+              <span>Estructural</span>
+            </button>
+            <button type="button" class="opt" data-v="NO_ESTRUCTURAL" aria-pressed="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.8 10.6c.7.6 1.3 1.4 1.3 2.4h5c0-1 .6-1.8 1.3-2.4A6 6 0 0 0 12 3z"/></svg>
+              <span>No estructural</span>
+            </button>
           </div>
         </label>
         <label class="f"><span id="catLabel">Elemento estructural</span>
