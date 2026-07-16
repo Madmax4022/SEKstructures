@@ -209,6 +209,14 @@
   .result .lbl{font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;font-size:12.5px;opacity:.95;margin-top:5px}
   .result .plazo{margin-top:11px;font-size:13.5px;background:rgba(255,255,255,.16);display:inline-block;padding:6px 12px;border-radius:999px}
   .note{font-size:13.5px;color:var(--risk-4);font-weight:600;text-align:center;margin:8px 0 0}
+  .req{font-style:normal;font-family:var(--mono);font-size:9.5px;color:var(--risk-4);background:color-mix(in srgb,var(--risk-4) 13%,transparent);
+    padding:2px 6px;border-radius:5px;margin-left:7px;letter-spacing:.4px;text-transform:uppercase;vertical-align:1px}
+  .toast{position:absolute;left:50%;bottom:24px;transform:translateX(-50%) translateY(22px);z-index:60;
+    background:var(--text);color:var(--surface);font-size:14px;font-weight:600;padding:13px 18px;border-radius:13px;
+    box-shadow:0 12px 34px -12px rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.28s cubic-bezier(.2,.8,.2,1);
+    max-width:86%;text-align:center;display:flex;gap:9px;align-items:center;line-height:1.3}
+  .toast .tk{width:20px;height:20px;border-radius:999px;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:12px;flex:0 0 auto}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   /* report summary bar */
   .sumbar{display:flex;height:16px;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin:4px 0 12px}
@@ -382,14 +390,17 @@
           <select class="in" id="catSel"></select>
         </label>
         <label class="f"><span>Ubicación</span><input class="in" id="ubic" placeholder="Ej. Eje C-4, nivel sótano"></label>
-        <label class="f"><span>Descripción de la condición</span><textarea class="in" id="desc" placeholder="Qué se observó…"></textarea></label>
+        <label class="f"><span>Descripción de la condición <em class="req">obligatorio</em></span><textarea class="in" id="desc" placeholder="Qué se observó…"></textarea></label>
         <label class="f"><span>Evidencia</span>
           <button class="btn ghost" type="button" id="photoBtn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" stroke="currentColor" stroke-width="1.6"/></svg>
             <span id="photoTxt">Tomar fotografía</span>
           </button>
         </label>
-        <div class="btnbar"><button class="btn primary" type="button" data-nav="wizard">Clasificar riesgo →</button></div>
+        <div class="btnbar">
+          <button class="btn primary" type="button" id="toWizardBtn" data-nav="wizard" disabled>Clasificar riesgo →</button>
+          <p class="note" id="toWizardNote">Escribe una descripción para continuar.</p>
+        </div>
       </section>
 
       <!-- RISK WIZARD -->
@@ -501,6 +512,8 @@
 
     </div>
 
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
     <!-- HELP SHEET -->
     <div class="sheet-wrap" id="helpSheet" hidden>
       <div class="sheet-backdrop" id="helpBackdrop"></div>
@@ -575,8 +588,8 @@
 
   var TITLES={
     home:["Proyectos","Inspecciones",null], project:["Proyecto","Centro comercial · Torre A",null],
-    safety:["Inspección · M-01","Seguridad del inspector","Paso 1"], inspection:["Inspección · M-01","Hallazgos",null],
-    finding:["Nuevo hallazgo","Registrar","Paso 2"], wizard:["Nuevo hallazgo","Clasificar riesgo","Paso 3"],
+    safety:["Inspección · M-01","Seguridad del inspector",null], inspection:["Inspección · M-01","Hallazgos",null],
+    finding:["Nuevo hallazgo","Registrar","1 de 2"], wizard:["Nuevo hallazgo","Clasificar riesgo","2 de 2"],
     unevaluated:["Inspección · M-01","No evaluados",null], matrix:["Resultados","Matriz de hallazgos",null], report:["Resultados","Entregable",null]
   };
   var stack=["home"];
@@ -601,6 +614,9 @@
   }
   window.go=function(s){ var i=stack.indexOf(s); if(i>=0){stack.length=i+1;} else {stack.push(s);} render(); };
   document.getElementById("backBtn").onclick=function(){ if(stack.length>1)stack.pop(); render(); };
+
+  var toastEl=document.getElementById("toast"),toastT;
+  function toast(msg){toastEl.innerHTML='<span class="tk">✓</span><span>'+msg+'</span>';toastEl.classList.add("show");clearTimeout(toastT);toastT=setTimeout(function(){toastEl.classList.remove("show");},2300);}
 
   // generic nav via data-nav
   document.querySelectorAll("[data-nav]").forEach(function(el){
@@ -655,7 +671,11 @@
     sel.innerHTML=list.map(function(c){return '<option'+(c===d.cat?" selected":"")+'>'+c+'</option>';}).join("");
     sel.onchange=function(){d.cat=sel.value;};
     var u=document.getElementById("ubic");u.value=d.ubic;u.oninput=function(){d.ubic=u.value;};
-    var de=document.getElementById("desc");de.value=d.desc;de.oninput=function(){d.desc=de.value;};
+    var de=document.getElementById("desc");de.value=d.desc;
+    var tw=document.getElementById("toWizardBtn"),twn=document.getElementById("toWizardNote");
+    function upd(){var ok=!!de.value.trim();tw.disabled=!ok;twn.style.display=ok?"none":"block";}
+    de.oninput=function(){d.desc=de.value;upd();};
+    upd();
     document.getElementById("photoTxt").textContent=d.foto?"Fotografía adjunta ✓":"Tomar fotografía";
   }
   document.getElementById("photoBtn").onclick=function(){state.draft.foto=!state.draft.foto;document.getElementById("photoTxt").textContent=state.draft.foto?"Fotografía adjunta ✓":"Tomar fotografía";};
@@ -677,11 +697,12 @@
   }
   function computeRisk(d){ if(d.hard)return 5; if(d.sev===null||d.prob===null)return null; return MATRIX[d.sev][d.prob]; }
   document.getElementById("saveFinding").onclick=function(){
-    var d=state.draft; var n=String(state.findings.length+1);
-    state.findings.push({num:("00"+n).slice(-3),origen:d.origen,tipo:d.tipo,cat:d.cat,ubic:d.ubic||"—",desc:d.desc||"(sin descripción)",nivel:d.nivel,foto:d.foto});
+    var d=state.draft; var num=("00"+(state.findings.length+1)).slice(-3);
+    state.findings.push({num:num,origen:d.origen,tipo:d.tipo,cat:d.cat,ubic:d.ubic||"—",desc:d.desc||"(sin descripción)",nivel:d.nivel,foto:d.foto});
     state.draft=null; state.emitted=false;
     stack=stack.filter(function(s){return s!=="finding"&&s!=="wizard";});
     render();
+    toast("Hallazgo #"+num+" registrado · nivel "+d.nivel);
   };
 
   function renderUnev(){
@@ -694,6 +715,7 @@
     var d=document.getElementById("unevDesc"); if(!d.value.trim())return;
     state.unev.push({desc:d.value.trim(),mot:document.getElementById("unevMot").value,medio:document.getElementById("unevMedio").value});
     d.value=""; state.emitted=false; renderUnev();
+    toast("Elemento no evaluado registrado");
   };
 
   function renderMatrix(){
@@ -737,6 +759,7 @@
     document.getElementById("signMeta").innerHTML="Colegiatura / registro: <b style='color:var(--text)'>"+reg+"</b><br>Sello de tiempo: "+ts;
     document.getElementById("stampMeta").innerHTML="Entregado a: Administración · Torre A<br>Registro inmutable · "+ts+"<br>Cadena de custodia activa";
     renderReport();
+    toast("Informe emitido y entregado");
   };
 
   // help sheet
