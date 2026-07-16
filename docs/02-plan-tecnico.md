@@ -66,6 +66,9 @@ Permisos finos por rol, registro de auditoría, exportación de la matriz (Excel
 **Fase 2 (después del MVP) — Campo sin señal.**
 Modo offline con sincronización, dictado por voz, geolocalización de fotos.
 
+**Opción comercial futura — Módulo "Seguimiento" activable (compliance C).**
+El bloque excluido por la frontera del producto (estado abierto/en proceso/cerrado, monitoreo trimestral, cierre con evidencia, escalamiento) ya quedó diseñado en la v0.2 del concepto. Puede ofrecerse más adelante como módulo opcional para clientes que quieran el ciclo completo dentro de la app, sin tocar el núcleo. En la Etapa 2 del MVP entra en su lugar el **puente de compliance**: matriz de seguimiento exportable + declaración de alcance en el informe.
+
 ---
 
 ## 6. Costo y riesgo

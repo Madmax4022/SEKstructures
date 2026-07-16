@@ -1,4 +1,4 @@
-<title>SEK Estructuras — Prototipo v0.5</title>
+<title>SEK Estructuras — Prototipo v0.6</title>
 <style>
   :root{
     --brand:#1f3a5f; --brand-strong:#16304f; --brand-soft:#2f5688;
@@ -272,7 +272,7 @@
       <div class="glyph" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none"><path d="M4 20V9l8-5 8 5v11" stroke="#dce8f8" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><path d="M4 20h16M9 20v-6h6v6M12 4v3" stroke="#a9c4e6" stroke-width="1.4" stroke-linecap="round"/></svg>
       </div>
-      <h1>SEK Estructuras <span class="ver">Prototipo · v0.5</span></h1>
+      <h1>SEK Estructuras <span class="ver">Prototipo · v0.6</span></h1>
     </div>
     <div class="rail-right">
       <button class="iconctl" id="themeBtn" type="button" aria-label="Cambiar entre tema claro y oscuro" title="Tema claro/oscuro">☾</button>
@@ -497,6 +497,8 @@
           <div class="row" style="justify-content:space-between"><div class="muted">Hallazgos registrados</div><b class="kv" id="rTot">0</b></div>
           <div class="row" style="justify-content:space-between;margin-top:8px"><div class="muted">Elementos no evaluados</div><b class="kv" id="rUnev">0</b></div>
           <div class="row" style="justify-content:space-between;margin-top:8px"><div class="muted">Evidencia fotográfica</div><b class="kv" id="rPhoto">0</b></div>
+          <div class="row" style="justify-content:space-between;margin-top:8px"><div class="muted">Matriz de seguimiento anexa</div><b class="kv" style="color:var(--ok)">Incluida</b></div>
+          <div class="row" style="justify-content:space-between;margin-top:8px"><div class="muted">Declaración de alcance</div><b class="kv" style="color:var(--ok)">Incluida</b></div>
         </div>
         <div class="sect">Firma del profesional competente</div>
         <div class="sign">
@@ -543,7 +545,7 @@
 
   </div>
 
-  <p class="caption">Prototipo funcional del núcleo (v0.5) · toca <b>?</b> en cada pantalla para la guía</p>
+  <p class="caption">Prototipo funcional del núcleo (v0.6) · toca <b>?</b> en cada pantalla para la guía</p>
 </div>
 
 <script>
@@ -568,7 +570,7 @@
     wizard:{t:"Asistente de riesgo",w:"El nivel 1–5 no lo pones a mano: lo calcula la app.",s:["Elige la severidad (consecuencia sobre la vida).","Elige la probabilidad de que empeore.","Si involucra gas, incendio o colapso, márcalo → nivel 5.","Guarda cuando ya tengas nivel y descripción."]},
     unevaluated:{t:"Elementos no evaluados",w:"Dejas constancia de lo que NO pudiste inspeccionar. Define el alcance real del informe.",s:["Describe qué no se pudo evaluar.","Indica el motivo y el medio que intentaste (dron, pértiga…).","Toca «+ Registrar»."]},
     matrix:{t:"Matriz de hallazgos",w:"Todos los hallazgos juntos, ordenados por riesgo.",s:["Usa los filtros para ver solo un nivel.","Revisa el plazo sugerido de cada hallazgo.","«Generar entregable» cuando esté completo."]},
-    report:{t:"Entregable",w:"El resultado final que se firma y se pone en manos del encargado. La app termina aquí.",s:["Revisa el resumen por nivel y el contenido.","Toca «Emitir informe firmado».","Se genera colegiatura, sello de tiempo y constancia de entrega."]}
+    report:{t:"Entregable",w:"El resultado final que se firma y se pone en manos del encargado. La app termina aquí.",s:["Revisa el resumen por nivel y el contenido.","El informe anexa una matriz de seguimiento pre-llenada y una declaración de alcance: el receptor continúa el proceso con ellas.","Toca «Emitir informe firmado».","Se genera colegiatura, sello de tiempo y constancia de entrega."]}
   };
 
   var seed=[

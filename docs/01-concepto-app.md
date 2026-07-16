@@ -3,8 +3,8 @@
 > **Nombre de trabajo:** SEK Estructuras *(tentativo)*
 > **Producto:** Herramienta independiente para **ejecutar inspecciones y entregar resultados**. Propiedad de su creador.
 > **Filosofía:** 80/20 · *menos es más* · **norma abierta** · **la app entrega y se detiene**.
-> **Estado:** Documento de concepto **v0.5** — frontera de alcance definida.
-> **Fecha:** 2026-07-15
+> **Estado:** Documento de concepto **v0.6** — frontera de alcance + puente de compliance.
+> **Fecha:** 2026-07-16
 
 ---
 
@@ -52,6 +52,8 @@ Tres reglas de diseño:
 | Entregar y dejar constancia de la entrega | Aprobación de remodelaciones · Gantt de mantenimiento |
 
 **Reinspección:** no es "seguimiento". Es simplemente **ejecutar una inspección nueva** — algo que la app hace de forma natural. Cada inspección es un entregable con fecha propia.
+
+**Puente de compliance (v0.6):** la frontera se mantiene, pero el entregable **arma la mano de quien sigue**: incluye una **matriz de seguimiento pre-llenada** (columnas de estado, cierre y evidencia vacías, listas para completar a mano) y una **declaración de alcance** que dice qué etapas cubre el informe y cuáles quedan a cargo del receptor. La app entrega y se detiene — pero entrega completo.
 
 ---
 
@@ -119,6 +121,8 @@ La app convierte la inspección en un flujo de captura en campo que produce un *
 - Acción inmediata en campo para nivel 5 (**protocolo + contactos, S3**).
 - Matriz de hallazgos (**tarjetas en móvil / tabla en web, U4**).
 - **Generación del entregable/informe firmado (PDF/Excel) — el clímax del producto (U7).**
+- **Matriz de seguimiento exportable anexa al informe** (pre-llenada con hallazgos, niveles y plazos; columnas de estado/cierre/evidencia vacías para que el receptor continúe a mano) — *puente de compliance A (v0.6)*.
+- **Declaración de alcance dentro del informe** (qué etapas cubre y cuáles quedan a cargo del receptor) — *puente de compliance B (v0.6)*.
 - Constancia de entrega (a quién, cuándo).
 
 ### Capas posteriores (después de validar el núcleo)
@@ -242,6 +246,12 @@ Usuario         id (UUID), nombre, rol, colegiatura/registro, es_profesional_com
 ---
 
 ## 13. Trazabilidad de cambios
+
+**v0.5 → v0.6 (puente de compliance, tras la auditoría contra los documentos originales):**
+- **A adoptada:** matriz de seguimiento exportable anexa al informe (el receptor completa a mano las etapas que la app no gestiona).
+- **B adoptada:** declaración de alcance dentro del informe.
+- **C anotada** en el plan técnico: módulo "Seguimiento" activable como opción comercial futura.
+- Origen: `docs/03-compliance-origen.md` — la frontera v0.5 dejaba sin soporte monitoreo/cierre para quien ejecute el procedimiento original completo.
 
 **v0.4 → v0.5 (frontera de alcance):**
 - Definida la **frontera**: la app cubre *inspección + presentación de resultados*; el seguimiento de la reparación queda **fuera** (§2).

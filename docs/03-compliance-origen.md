@@ -149,6 +149,8 @@ El PDF incluye una sección fija: *"Este informe cubre las etapas de inspección
 Dejar anotado en el plan técnico que el bloque excluido (estado/monitoreo/cierre) puede ofrecerse después como **módulo opcional** para clientes que sí quieran el ciclo completo dentro de la app. El modelo de datos ya lo soporta (las entidades se diseñaron en v0.2 y están documentadas).
 **Efecto:** la exclusión de hoy se convierte en oportunidad de venta de mañana, sin comprometer el MVP.
 
+> **Resolución (2026-07-16):** se adoptan **A + B** para el MVP (concepto v0.6) y **C queda anotada** en el plan técnico como opción comercial futura. Con A+B, todos los requisitos 🚫 del bloque de seguimiento quedan **cubiertos por transferencia documentada al receptor**: la app no los ejecuta, pero entrega el instrumento y la constancia para que se ejecuten.
+
 ### Pendientes que igual hay que cerrar (independientes de A/B/C)
 1. **Subcategorías** (R4): definir catálogo o texto libre.
 2. **Calibración de la matriz** severidad × probabilidad (N2) con un profesional competente.
