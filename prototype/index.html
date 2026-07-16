@@ -156,6 +156,13 @@
   .opts.sev{grid-template-columns:repeat(2,1fr)}
   .opts.prob{grid-template-columns:repeat(3,1fr)}
   .opts.duo{grid-template-columns:repeat(2,1fr)}
+  .opts.sym{grid-template-columns:repeat(3,1fr)}
+  .opt.sm{min-height:82px;padding:10px 5px;font-size:12px;gap:7px;border-radius:12px}
+  .opt.sm .ico{width:34px;height:34px;border-radius:9px}
+  .opt.sm .ico svg{width:22px;height:22px}
+  .opt .sub{display:block;font-size:10.5px;font-weight:500;opacity:.8;line-height:1.3;margin-top:3px}
+  .tipline{font-size:13px;color:var(--text-dim);text-align:center;margin:12px 6px 0;line-height:1.5}
+  .tipline b{color:var(--text)}
   .opt{--c:var(--brand);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:94px;padding:12px 8px;
     border-radius:14px;border:1.5px solid var(--line-strong);background:var(--surface-3);color:var(--text);cursor:pointer;
     font-family:var(--sans);font-size:14.5px;font-weight:600;line-height:1.15;text-align:center;transition:transform .1s, box-shadow .12s, background .12s, border-color .12s}
@@ -392,6 +399,19 @@
         <label class="f"><span id="catLabel">Elemento estructural</span>
           <select class="in" id="catSel"></select>
         </label>
+        <label class="f"><span>Síntoma observable <em class="req">obligatorio</em></span>
+          <div class="opts sym" id="symSeg"></div>
+        </label>
+        <div id="medidaBox" style="display:none">
+          <label class="f"><span>Medida guiada — ¿qué entra en la fisura?</span>
+            <div class="opts duo" id="medSeg">
+              <button type="button" class="opt sm" data-v="Nada (&lt;1 mm)"><span>Nada<span class="sub">&lt; 1 mm</span></span></button>
+              <button type="button" class="opt sm" data-v="Tarjeta (~1 mm)"><span>Una tarjeta<span class="sub">≈ 1 mm</span></span></button>
+              <button type="button" class="opt sm" data-v="Moneda (2–3 mm)"><span>Una moneda<span class="sub">≈ 2–3 mm</span></span></button>
+              <button type="button" class="opt sm" data-v="Dedo (≥10 mm)"><span>Un dedo<span class="sub">≥ 10 mm</span></span></button>
+            </div>
+          </label>
+        </div>
         <label class="f"><span>Ubicación</span><input class="in" id="ubic" placeholder="Ej. Eje C-4, nivel sótano"></label>
         <label class="f"><span>Descripción de la condición <em class="req">obligatorio</em></span><textarea class="in" id="desc" placeholder="Qué se observó…"></textarea></label>
         <label class="f"><span>Evidencia</span>
@@ -409,27 +429,27 @@
       <!-- RISK WIZARD -->
       <section class="screen" data-screen="wizard">
         <div class="hint"><b>Asistente de riesgo.</b> Tres preguntas calculan el nivel 1–5 con una matriz severidad × probabilidad. Aplica igual a hallazgos normados y no normados.</div>
-        <label class="f"><span>1 · Consecuencia sobre la vida humana</span>
+        <label class="f"><span>1 · ¿Qué pasaría si esto falla ahora?</span>
           <div class="opts sev" id="sevSeg">
             <button type="button" class="opt" data-v="0">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M8 2.5h8L21.5 8v8L16 21.5H8L2.5 16V8z"/><path d="M12 7.5v6" stroke-width="2.3" stroke-linecap="round"/><circle cx="12" cy="17" r="1.15" fill="currentColor" stroke="none"/></svg>
-              <span>Inminente</span>
+              <span>Inminente<span class="sub">sobre personas, evacuación, gas o incendio</span></span>
             </button>
             <button type="button" class="opt" data-v="1">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 3.2l9.3 16.3H2.7z"/><path d="M12 9.5v5" stroke-width="2.3" stroke-linecap="round"/><circle cx="12" cy="17.6" r="1.15" fill="currentColor" stroke="none"/></svg>
-              <span>Crítica</span>
+              <span>Crítica<span class="sub">elemento que carga o sistema de seguridad</span></span>
             </button>
             <button type="button" class="opt" data-v="2">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="16.6" r="1.15" fill="currentColor" stroke="none"/></svg>
-              <span>Moderada</span>
+              <span>Moderada<span class="sub">daño funcional, sin riesgo directo</span></span>
             </button>
             <button type="button" class="opt" data-v="3">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11.2v5" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="7.8" r="1.15" fill="currentColor" stroke="none"/></svg>
-              <span>Menor</span>
+              <span>Menor<span class="sub">superficial o estético</span></span>
             </button>
           </div>
         </label>
-        <label class="f"><span>2 · Probabilidad de evolución / agravamiento</span>
+        <label class="f"><span>2 · ¿Hay señales de que está avanzando?</span>
           <div class="opts prob" id="probSeg">
             <button type="button" class="opt" data-v="0">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3.5" y="13" width="4.5" height="7.5" rx="1" fill="currentColor" stroke="none"/><rect x="9.75" y="9" width="4.5" height="11.5" rx="1"/><rect x="16" y="4.5" width="4.5" height="16" rx="1"/></svg>
@@ -445,11 +465,21 @@
             </button>
           </div>
         </label>
+        <div class="hint" style="margin-top:-4px"><b>Indicios en sitio:</b> fisura con bordes limpios y sin pintura adentro = activa · con pintura o suciedad adentro = antigua y estable · óxido que descascara al tocarlo o mancha húmeda = avanzando.</div>
         <label class="check warn" for="hardRule">
           <input type="checkbox" id="hardRule">
           <div><div class="t">Involucra gas, sistema contra incendios o riesgo de colapso</div><div class="d">Regla dura: si se marca, el resultado es nivel 5 automáticamente.</div></div>
         </label>
         <div id="riskResult"></div>
+        <div id="verticalBox" style="display:none">
+          <div class="sect">Detalle para el ingeniero — solo se pide en nivel 4</div>
+          <label class="check" for="vq0"><input type="checkbox" id="vq0"><div><div class="t">El elemento soporta algo</div><div class="d">Techo, equipo pesado o piso superior.</div></div></label>
+          <label class="check" for="vq1"><input type="checkbox" id="vq1"><div><div class="t">El daño atraviesa el elemento</div><div class="d">Se ve por ambos lados.</div></div></label>
+          <label class="check" for="vq2"><input type="checkbox" id="vq2"><div><div class="t">Deformación visible a simple vista</div><div class="d">Pandeo, flecha o desplome apreciable.</div></div></label>
+          <label class="check" for="vq3"><input type="checkbox" id="vq3"><div><div class="t">Apareció o creció recientemente</div><div class="d">Según personal del sitio o registros.</div></div></label>
+          <label class="check" for="vq4"><input type="checkbox" id="vq4"><div><div class="t">Hay más elementos iguales afectados</div><div class="d">Patrón repetido, no un caso aislado.</div></div></label>
+        </div>
+        <p class="tipline">¿Dudas entre dos niveles? <b>Marca el mayor</b> — el ingeniero lo ajustará con justificación registrada.</p>
         <div class="btnbar"><button class="btn primary" type="button" id="saveFinding" disabled>Guardar hallazgo</button></div>
       </section>
 
@@ -553,6 +583,21 @@
   "use strict";
   var CAT_NE=["Sistema de protección a la vida","Materiales peligrosos","Particiones","Cielos arquitectónicos","Luminarias","Ventanería","Escaleras","Contenido y mobiliario","Equipo eléctrico y mecánico","Tuberías","Ductos"];
   var CAT_E=["Columna","Viga","Muro / cortante","Marco","Conexión / soldadura","Diafragma / entrepiso","Cimentación"];
+  var SYMPTOMS=[
+    {k:"fisura",t:"Fisura / grieta",svg:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M9.5 4l2 5-3 4 4 3-1.2 4"/>'},
+    {k:"pandeo",t:"Deformación / pandeo",svg:'<path d="M6 3h12M6 21h12"/><path d="M12 3c-3.6 4.8 3.6 13.2 0 18"/>'},
+    {k:"oxido",t:"Corrosión / óxido",svg:'<circle cx="12" cy="12" r="8"/><circle cx="9" cy="10" r=".9" fill="currentColor" stroke="none"/><circle cx="13.6" cy="14.2" r=".9" fill="currentColor" stroke="none"/><circle cx="14.2" cy="9" r=".9" fill="currentColor" stroke="none"/><circle cx="9.8" cy="15" r=".9" fill="currentColor" stroke="none"/>'},
+    {k:"desprend",t:"Desprendimiento",svg:'<path d="M9 4h11v16H4V9z"/><path d="M7.5 2.5L2.5 7.5" stroke-dasharray="2 2"/>'},
+    {k:"acero",t:"Acero expuesto",svg:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M8.5 9v6M12 9v6M15.5 9v6"/>'},
+    {k:"humedad",t:"Humedad / mancha",svg:'<path d="M12 3.5C8.5 8 6 11 6 14a6 6 0 0 0 12 0c0-3-2.5-6-6-10.5z"/>'},
+    {k:"asenta",t:"Asentamiento / desnivel",svg:'<path d="M3 13.5l18-5"/><path d="M7 21v-4.5M12 21v-6M17 21v-7.5"/>'},
+    {k:"suelto",t:"Suelto / mal anclado",svg:'<path d="M5 8V5h14v3"/><rect x="8" y="12" width="8" height="7" rx="1"/><path d="M12 8v2.5" stroke-dasharray="1.5 1.5"/>'},
+    {k:"impacto",t:"Impacto / daño",svg:'<path d="M12 4v3.5M12 16.5V20M4 12h3.5M16.5 12H20M6.7 6.7l2.4 2.4M17.3 6.7l-2.4 2.4M6.7 17.3l2.4-2.4M17.3 17.3l-2.4-2.4"/>'},
+    {k:"faltante",t:"Faltante / removido",svg:'<rect x="5" y="5" width="14" height="14" rx="2" stroke-dasharray="3 3"/><path d="M9 12h6"/>'},
+    {k:"modif",t:"Modificación no autorizada",svg:'<rect x="4" y="4" width="16" height="16" rx="1"/><circle cx="12" cy="12" r="3"/><path d="M5.5 18.5l13-13"/>'},
+    {k:"otro",t:"Otro",svg:'<circle cx="6" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.3" fill="currentColor" stroke="none"/>'}
+  ];
+  var SYM_LABEL={};SYMPTOMS.forEach(function(s){SYM_LABEL[s.k]=s.t;});
   var MATRIX=[[4,5,5],[3,4,4],[2,3,3],[1,1,2]];
   var PLAZO={5:"Mitigación ≤ 72 h · reparación ≤ 3 meses",4:"Reparación ≤ 3 meses",3:"3 meses – 1 año",2:"3 meses – 1 año",1:"Según programación"};
   var SAFETY=[
@@ -566,19 +611,19 @@
     project:{t:"Módulos",w:"El edificio se divide en módulos para ordenar el recorrido.",s:["Toca un módulo para inspeccionarlo.","O usa «Iniciar inspección» para arrancar por el primero."]},
     safety:{t:"Seguridad del inspector",w:"Antes de entrar confirmas tu propia seguridad. Es obligatorio.",s:["Marca cada casilla (ATS, EPP, permisos, peligros eléctricos).","El botón «Comenzar recorrido» se activa cuando marcas todo."]},
     inspection:{t:"Hallazgos de la inspección",w:"El recorrido en curso. Aquí se acumula lo que vas encontrando.",s:["Usa «+ Nuevo hallazgo» para registrar uno.","Registra lo que no pudiste ver en «No evaluados».","Al terminar, «Ver matriz» para entregar resultados."]},
-    finding:{t:"Registrar un hallazgo",w:"Describes qué encontraste y de qué tipo es.",s:["Elige el origen: normado o no normado (riesgo emergente).","Elige tipo y categoría del elemento.","Escribe ubicación y descripción, adjunta foto.","Toca «Clasificar riesgo»."]},
-    wizard:{t:"Asistente de riesgo",w:"El nivel 1–5 no lo pones a mano: lo calcula la app.",s:["Elige la severidad (consecuencia sobre la vida).","Elige la probabilidad de que empeore.","Si involucra gas, incendio o colapso, márcalo → nivel 5.","Guarda cuando ya tengas nivel y descripción."]},
+    finding:{t:"Registrar un hallazgo",w:"Describe lo que VES, no lo que crees que significa. El diagnóstico es del ingeniero.",s:["Elige el origen (normado / no normado) y el tipo de elemento.","Elige el síntoma observable en el catálogo (fisura, óxido, suelto…).","Si es fisura, usa la medida guiada: ¿entra una tarjeta, una moneda, un dedo?","Escribe ubicación y descripción, adjunta foto.","Toca «Clasificar riesgo»."]},
+    wizard:{t:"Asistente de riesgo",w:"El nivel 1–5 no lo pones a mano: lo calcula la app. Ante la duda, marca el mayor.",s:["¿Qué pasaría si esto falla ahora? (severidad)","¿Hay señales de que está avanzando? (con indicios en sitio)","Gas, incendio o colapso → nivel 5 automático y vía rápida: mitiga primero.","En nivel 4 la app pide 5 datos extra para el ingeniero.","Guarda cuando tengas el nivel."]},
     unevaluated:{t:"Elementos no evaluados",w:"Dejas constancia de lo que NO pudiste inspeccionar. Define el alcance real del informe.",s:["Describe qué no se pudo evaluar.","Indica el motivo y el medio que intentaste (dron, pértiga…).","Toca «+ Registrar»."]},
     matrix:{t:"Matriz de hallazgos",w:"Todos los hallazgos juntos, ordenados por riesgo.",s:["Usa los filtros para ver solo un nivel.","Revisa el plazo sugerido de cada hallazgo.","«Generar entregable» cuando esté completo."]},
     report:{t:"Entregable",w:"El resultado final que se firma y se pone en manos del encargado. La app termina aquí.",s:["Revisa el resumen por nivel y el contenido.","El informe anexa una matriz de seguimiento pre-llenada y una declaración de alcance: el receptor continúa el proceso con ellas.","Toca «Emitir informe firmado».","Se genera colegiatura, sello de tiempo y constancia de entrega."]}
   };
 
   var seed=[
-    {num:"001",origen:"NO_NORMADO",tipo:"NO_ESTRUCTURAL",cat:"Tuberías",ubic:"Cuarto de máquinas, M-01",desc:"Fuga en tubería de GLP; olor persistente.",nivel:5,foto:true},
-    {num:"002",origen:"NORMADO",tipo:"ESTRUCTURAL",cat:"Columna",ubic:"Eje C-4, sótano",desc:"Fisura diagonal ~2 mm en columna.",nivel:4,foto:true},
-    {num:"003",origen:"NORMADO",tipo:"NO_ESTRUCTURAL",cat:"Luminarias",ubic:"Pasillo central N2",desc:"Luminaria suspendida sin anclaje secundario.",nivel:3,foto:true},
-    {num:"004",origen:"NO_NORMADO",tipo:"ESTRUCTURAL",cat:"Conexión / soldadura",ubic:"Escalera de servicio E-2",desc:"Corrosión leve en placa base.",nivel:2,foto:false},
-    {num:"005",origen:"NORMADO",tipo:"NO_ESTRUCTURAL",cat:"Contenido y mobiliario",ubic:"Local 118",desc:"Rótulo interior con fijación holgada.",nivel:1,foto:true}
+    {num:"001",origen:"NO_NORMADO",tipo:"NO_ESTRUCTURAL",cat:"Tuberías",sintoma:"Otro",ubic:"Cuarto de máquinas, M-01",desc:"Fuga en tubería de GLP; olor persistente.",nivel:5,foto:true},
+    {num:"002",origen:"NORMADO",tipo:"ESTRUCTURAL",cat:"Columna",sintoma:"Fisura / grieta",medida:"Moneda (2–3 mm)",ubic:"Eje C-4, sótano",desc:"Fisura diagonal ~2 mm en columna.",nivel:4,foto:true},
+    {num:"003",origen:"NORMADO",tipo:"NO_ESTRUCTURAL",cat:"Luminarias",sintoma:"Suelto / mal anclado",ubic:"Pasillo central N2",desc:"Luminaria suspendida sin anclaje secundario.",nivel:3,foto:true},
+    {num:"004",origen:"NO_NORMADO",tipo:"ESTRUCTURAL",cat:"Conexión / soldadura",sintoma:"Corrosión / óxido",ubic:"Escalera de servicio E-2",desc:"Corrosión leve en placa base.",nivel:2,foto:false},
+    {num:"005",origen:"NORMADO",tipo:"NO_ESTRUCTURAL",cat:"Contenido y mobiliario",sintoma:"Suelto / mal anclado",ubic:"Local 118",desc:"Rótulo interior con fijación holgada.",nivel:1,foto:true}
   ];
   var state={};
   function reset(){
@@ -654,12 +699,12 @@
     el.innerHTML=arr.map(function(f){
       return '<div class="card"><div class="row"><div class="stripe" style="background:var(--risk-'+f.nivel+')"></div>'+
         '<div class="grow"><div class="row" style="gap:8px"><span class="kv">#'+f.num+'</span>'+originTag(f.origen)+(f.foto?'':'<span class="tag" style="color:var(--risk-4)">sin foto</span>')+'</div>'+
-        '<div class="title" style="margin-top:6px">'+esc(f.desc)+'</div><div class="muted">'+esc(f.ubic)+' · '+esc(f.cat)+'</div></div>'+
+        '<div class="title" style="margin-top:6px">'+esc(f.desc)+'</div><div class="muted">'+esc(f.ubic)+' · '+esc(f.cat)+(f.sintoma?' · '+esc(f.sintoma):'')+(f.medida?' ('+esc(f.medida)+')':'')+'</div></div>'+
         riskCluster(f.nivel)+'</div></div>';
     }).join("");
   }
 
-  document.getElementById("newFindingBtn").onclick=function(){ state.draft={origen:"NO_NORMADO",tipo:"ESTRUCTURAL",cat:CAT_E[0],ubic:"",desc:"",foto:false,sev:null,prob:null,hard:false,nivel:null}; go("finding"); };
+  document.getElementById("newFindingBtn").onclick=function(){ state.draft={origen:"NO_NORMADO",tipo:"ESTRUCTURAL",cat:CAT_E[0],sintoma:null,medida:null,ubic:"",desc:"",foto:false,sev:null,prob:null,hard:false,nivel:null,vertical:[false,false,false,false,false]}; go("finding"); };
   function seg(id,val,cb){
     document.querySelectorAll("#"+id+" button").forEach(function(b){
       b.setAttribute("aria-pressed", b.dataset.v===String(val));
@@ -675,10 +720,14 @@
     var sel=document.getElementById("catSel");var list=d.tipo==="ESTRUCTURAL"?CAT_E:CAT_NE;
     sel.innerHTML=list.map(function(c){return '<option'+(c===d.cat?" selected":"")+'>'+c+'</option>';}).join("");
     sel.onchange=function(){d.cat=sel.value;};
+    seg("symSeg",d.sintoma,function(v){d.sintoma=v;if(v!=="fisura")d.medida=null;syncFindingForm();});
+    document.getElementById("medidaBox").style.display=d.sintoma==="fisura"?"":"none";
+    seg("medSeg",d.medida,function(v){d.medida=v;syncFindingForm();});
     var u=document.getElementById("ubic");u.value=d.ubic;u.oninput=function(){d.ubic=u.value;};
     var de=document.getElementById("desc");de.value=d.desc;
     var tw=document.getElementById("toWizardBtn"),twn=document.getElementById("toWizardNote");
-    function upd(){var ok=!!de.value.trim();tw.disabled=!ok;twn.style.display=ok?"none":"block";}
+    function upd(){var ok=!!de.value.trim()&&!!d.sintoma;tw.disabled=!ok;twn.style.display=ok?"none":"block";
+      twn.textContent=!d.sintoma?"Elige el síntoma observable para continuar.":"Escribe una descripción para continuar.";}
     de.oninput=function(){d.desc=de.value;upd();};
     upd();
     document.getElementById("photoTxt").textContent=d.foto?"Fotografía adjunta ✓":"Tomar fotografía";
@@ -693,17 +742,28 @@
     var n=computeRisk(d);d.nivel=n;
     var box=document.getElementById("riskResult");
     if(n){
+      var extra='';
+      if(n===5){extra='<div class="hint warn" style="margin-top:10px"><b>Vía rápida nivel 5 — mitiga primero.</b> Acordonar, restringir acceso, cerrar válvulas si aplica, y notificar a la dirección técnica. El registro se completa después; no dejes el formulario entre tú y la mitigación.</div>';}
+      if(n>=4){extra+='<p class="tipline" style="margin-top:8px">Se marcará <b>«requiere evaluación de ingeniero estructural»</b></p>';}
       var note=(!d.desc)?'<p class="note">Falta la descripción (paso anterior) para poder guardar.</p>':'';
-      box.innerHTML='<div class="result r'+n+'"><div class="n">'+n+'</div><div class="lbl">'+(n>=4?"Crítico":n>=2?"Moderado":"Menor")+'</div><div class="plazo">'+PLAZO[n]+'</div></div>'+note;
+      box.innerHTML='<div class="result r'+n+'"><div class="n">'+n+'</div><div class="lbl">'+(n>=4?"Crítico":n>=2?"Moderado":"Menor")+'</div><div class="plazo">'+PLAZO[n]+'</div></div>'+extra+note;
     }else{
       box.innerHTML='<div class="empty">Responde severidad y probabilidad para calcular el nivel.</div>';
     }
-    document.getElementById("saveFinding").disabled=!n||!d.desc;
+    document.getElementById("verticalBox").style.display=(n===4)?"":"none";
+    for(var i=0;i<5;i++){(function(i){
+      var c=document.getElementById("vq"+i);
+      c.checked=!!d.vertical[i];
+      c.onchange=function(){d.vertical[i]=c.checked;};
+    })(i);}
+    var sv=document.getElementById("saveFinding");
+    sv.disabled=!n||!d.desc;
+    sv.textContent=(n===5)?"Guardar y activar protocolo":"Guardar hallazgo";
   }
   function computeRisk(d){ if(d.hard)return 5; if(d.sev===null||d.prob===null)return null; return MATRIX[d.sev][d.prob]; }
   document.getElementById("saveFinding").onclick=function(){
     var d=state.draft; var num=("00"+(state.findings.length+1)).slice(-3);
-    state.findings.push({num:num,origen:d.origen,tipo:d.tipo,cat:d.cat,ubic:d.ubic||"—",desc:d.desc||"(sin descripción)",nivel:d.nivel,foto:d.foto});
+    state.findings.push({num:num,origen:d.origen,tipo:d.tipo,cat:d.cat,sintoma:SYM_LABEL[d.sintoma]||d.sintoma,medida:d.medida,ubic:d.ubic||"—",desc:d.desc||"(sin descripción)",nivel:d.nivel,foto:d.foto,reqIng:d.nivel>=4,vertical:d.vertical.slice()});
     state.draft=null; state.emitted=false;
     stack=stack.filter(function(s){return s!=="finding"&&s!=="wizard";});
     render();
@@ -792,6 +852,11 @@
     this.textContent=(next==="dark"?"☀":"☾");
   };
   (function(){var d=new Date();document.getElementById("clock").textContent=("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);})();
+
+  // build symptom catalog tiles
+  document.getElementById("symSeg").innerHTML=SYMPTOMS.map(function(s){
+    return '<button type="button" class="opt sm" data-v="'+s.k+'"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+s.svg+'</svg></span><span>'+s.t+'</span></button>';
+  }).join("");
 
   // wrap each option-tile icon in a colored badge
   document.querySelectorAll(".opt > svg").forEach(function(svg){

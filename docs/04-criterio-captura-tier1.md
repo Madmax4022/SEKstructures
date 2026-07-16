@@ -135,3 +135,5 @@ La **regla dura** no cambia: gas / contra incendios / colapso → nivel 5 autom�
 6. Las **medidas guiadas** (tarjeta/moneda/dedo) reemplazan el campo libre de medición para fisuras.
 
 *(Ninguno de estos cambios toca la frontera del producto ni el modelo de datos de fondo: son refinamientos de captura sobre lo ya diseñado.)*
+
+> **Estado: APLICADO al prototipo (v0.6)** — los 6 cambios están implementados y verificados en navegador real (tema claro y oscuro).
