@@ -74,6 +74,8 @@ Un hallazgo **no requiere una norma detrás** para entrar al sistema:
 
 Ambos reciben nivel de riesgo 1–5, foto y entran al informe. **La norma es un atributo opcional, no una condición.**
 
+> **Nota de captura (dictamen §8):** en campo esto NO se pregunta como "¿normado?" — el inspector solo responde el hecho *"¿cómo lo detectaste?"* (aplicando la lista de verificación / observación directa). La referencia normativa la ancla el ingeniero en gabinete, y en Fase 2 (listas interactivas) el origen se marca automáticamente.
+
 ---
 
 ## 4. Problema que resuelve

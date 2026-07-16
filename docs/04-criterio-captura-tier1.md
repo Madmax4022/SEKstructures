@@ -155,3 +155,22 @@ En campo los síntomas rara vez vienen solos, y sus **combinaciones son oro diag
    - Acero expuesto + óxido → corrosión activa del refuerzo
    - Desprendimiento + acero expuesto → pérdida de recubrimiento
 4. **Multi-síntoma ≠ multi-problema:** la regla *un hallazgo = una condición* se protege con la guía visible en pantalla: *"¿Ves dos problemas distintos? Regístralos como dos hallazgos."*
+
+---
+
+## 8. Adenda — el origen del hallazgo es un hecho, no un conocimiento *(aplicada)*
+
+**Problema detectado:** la pregunta "¿Normado o no normado?" le pedía al inspector SYSO saber si la condición está cubierta por una norma — conocimiento normativo que no tiene por qué tener, y que contradice la regla de oro de este dictamen. Además, no es un dato crítico para el cribado: no altera el nivel de riesgo, los plazos ni la acción inmediata; su valor es de **trazabilidad en el informe**.
+
+**Corrección:** la pregunta se reformula de *conocimiento* a *hecho* — algo que el inspector siempre sabe porque describe su propia acción:
+
+| Pregunta | Opciones |
+|---|---|
+| **"¿Cómo lo detectaste?"** | 📋 Aplicando la lista de verificación · 👁 Observación directa en el recorrido |
+
+**Reparto de responsabilidades:**
+- **Inspector en campo:** solo indica de dónde salió el hallazgo. Default: observación directa.
+- **Ingeniero en gabinete:** ancla la referencia normativa exacta (`ref_norma`) al revisar — ahí es donde "normado" adquiere su significado real.
+- **Fase 2 (listas interactivas):** la pregunta **desaparece** — un hallazgo creado desde un ítem de la lista se marca normado automáticamente con la referencia pre-llenada.
+
+*(Los valores internos del modelo no cambian: NORMADO / NO_NORMADO. Cambia solo cómo se pregunta y quién responde qué.)*

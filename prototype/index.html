@@ -371,19 +371,19 @@
 
       <!-- NEW FINDING -->
       <section class="screen" data-screen="finding">
-        <label class="f"><span>Origen del hallazgo</span>
+        <label class="f"><span>¿Cómo lo detectaste?</span>
           <div class="opts duo" id="origenSeg">
             <button type="button" class="opt" data-v="NORMADO" aria-pressed="false">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M8.5 13.5l2 2 4-4" stroke-linecap="round"/></svg>
-              <span>Normado</span>
+              <span>Aplicando la lista de verificación</span>
             </button>
             <button type="button" class="opt" data-v="NO_NORMADO" aria-pressed="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
-              <span>No normado</span>
+              <span>Observación directa en el recorrido</span>
             </button>
           </div>
         </label>
-        <div class="hint" id="origenHint">Sin norma detrás: basta el <b>criterio profesional</b> para abrirlo. Igual recibe nivel de riesgo, foto y entra al entregable.</div>
+        <div class="hint" id="origenHint">Tu criterio basta para abrirlo: recibe nivel de riesgo, foto y entra al entregable. Si aplica una referencia normativa, <b>el ingeniero la ancla en gabinete</b> — no es tu tarea saberlo.</div>
         <label class="f"><span>Tipo de elemento</span>
           <div class="opts duo" id="tipoSeg">
             <button type="button" class="opt" data-v="ESTRUCTURAL" aria-pressed="true">
@@ -429,7 +429,7 @@
 
       <!-- RISK WIZARD -->
       <section class="screen" data-screen="wizard">
-        <div class="hint"><b>Asistente de riesgo.</b> Tres preguntas calculan el nivel 1–5 con una matriz severidad × probabilidad. Aplica igual a hallazgos normados y no normados.</div>
+        <div class="hint"><b>Asistente de riesgo.</b> Tres preguntas calculan el nivel 1–5 con una matriz severidad × probabilidad. Aplica a todo hallazgo, venga de la lista de verificación o de observación directa.</div>
         <label class="f"><span>1 · ¿Qué pasaría si esto falla ahora?</span>
           <div class="opts sev" id="sevSeg">
             <button type="button" class="opt" data-v="0">
@@ -621,7 +621,7 @@
     project:{t:"Módulos",w:"El edificio se divide en módulos para ordenar el recorrido.",s:["Toca un módulo para inspeccionarlo.","O usa «Iniciar inspección» para arrancar por el primero."]},
     safety:{t:"Seguridad del inspector",w:"Antes de entrar confirmas tu propia seguridad. Es obligatorio.",s:["Marca cada casilla (ATS, EPP, permisos, peligros eléctricos).","El botón «Comenzar recorrido» se activa cuando marcas todo."]},
     inspection:{t:"Hallazgos de la inspección",w:"El recorrido en curso. Aquí se acumula lo que vas encontrando.",s:["Usa «+ Nuevo hallazgo» para registrar uno.","Registra lo que no pudiste ver en «No evaluados».","Al terminar, «Ver matriz» para entregar resultados."]},
-    finding:{t:"Registrar un hallazgo",w:"Describe lo que VES, no lo que crees que significa. El diagnóstico es del ingeniero.",s:["Elige el origen (normado / no normado) y el tipo de elemento.","Marca TODOS los síntomas que veas — la app decide cuál es el principal, sin importar el orden en que los toques.","Si hay fisura, usa la medida guiada: ¿entra una tarjeta, una moneda, un dedo?","¿Dos problemas distintos? Regístralos como dos hallazgos.","Escribe ubicación y descripción, adjunta foto, y toca «Clasificar riesgo»."]},
+    finding:{t:"Registrar un hallazgo",w:"Describe lo que VES, no lo que crees que significa. El diagnóstico es del ingeniero.",s:["Di cómo lo detectaste: aplicando la lista de verificación o por observación directa (no necesitas saber si hay norma — eso lo ancla el ingeniero en gabinete).","Marca TODOS los síntomas que veas — la app decide cuál es el principal, sin importar el orden en que los toques.","Si hay fisura, usa la medida guiada: ¿entra una tarjeta, una moneda, un dedo?","¿Dos problemas distintos? Regístralos como dos hallazgos.","Escribe ubicación y descripción, adjunta foto, y toca «Clasificar riesgo»."]},
     wizard:{t:"Asistente de riesgo",w:"El nivel 1–5 no lo pones a mano: lo calcula la app. Ante la duda, marca el mayor.",s:["¿Qué pasaría si esto falla ahora? (severidad)","¿Hay señales de que está avanzando? (con indicios en sitio)","Gas, incendio o colapso → nivel 5 automático y vía rápida: mitiga primero.","En nivel 4 la app pide 5 datos extra para el ingeniero.","Guarda cuando tengas el nivel."]},
     unevaluated:{t:"Elementos no evaluados",w:"Dejas constancia de lo que NO pudiste inspeccionar. Define el alcance real del informe.",s:["Describe qué no se pudo evaluar.","Indica el motivo y el medio que intentaste (dron, pértiga…).","Toca «+ Registrar»."]},
     matrix:{t:"Matriz de hallazgos",w:"Todos los hallazgos juntos, ordenados por riesgo.",s:["Usa los filtros para ver solo un nivel.","Revisa el plazo sugerido de cada hallazgo.","«Generar entregable» cuando esté completo."]},
@@ -689,7 +689,7 @@
   function badge(n){return '<div class="badge r'+n+'" aria-label="Nivel de riesgo '+n+'">'+n+'</div>';}
   function riskCluster(n){return '<div class="risk">'+meter(n)+badge(n)+'</div>';}
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
-  function originTag(o){return o==="NORMADO"?'<span class="tag norm">◆ Normado</span>':'<span class="tag">◇ No normado</span>';}
+  function originTag(o){return o==="NORMADO"?'<span class="tag norm">◆ Lista de verificación</span>':'<span class="tag">◇ Observación directa</span>';}
 
   function renderSafety(){
     var el=document.getElementById("safetyList");
