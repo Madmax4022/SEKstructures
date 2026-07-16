@@ -51,8 +51,7 @@ Es la combinación con **menos piezas que mantener** y que cubre de fábrica cas
 
 ## 5. Hoja de ruta de construcción
 
-**Etapa 0 — Cimientos (base de datos + login).**
-Crear el modelo de datos del concepto en Supabase, el login y los roles. Sin pantallas todavía.
+**Etapa 0 — Cimientos (base de datos + login).** ✅ **En marcha (2026-07-16):** esquema completo en `supabase/migrations/0001_esquema_inicial.sql` (tablas, enums, RLS multi-proyecto, auditoría, inmutabilidad de fotos e informes emitidos) y esqueleto de la PWA en `app/` (Vite + React + TS, cliente Supabase, tipos espejo). Falta: crear el proyecto Supabase real y aplicar la migración (pasos en `app/README.md`).
 
 **Etapa 1 — El núcleo capturable.**
 Proyectos → módulos → inspección → **registrar hallazgo con foto** → **asistente de riesgo 1–5** → matriz. Es el corazón que ya viste en el prototipo, ahora guardando de verdad.

@@ -6,7 +6,7 @@ Herramienta independiente para **ejecutar inspecciones y entregar resultados**. 
 
 ## Estado
 
-En fase de definición del concepto. El código aún no comienza.
+**Etapa 0 en marcha** — el código comenzó: esquema de base de datos (Supabase) y esqueleto de la PWA (React + TypeScript + Vite). Ver `app/README.md` para la puesta en marcha.
 
 ## Documentación
 
@@ -15,6 +15,8 @@ En fase de definición del concepto. El código aún no comienza.
 - [`docs/03-compliance-origen.md`](docs/03-compliance-origen.md) — Auditoría de compliance contra los documentos originales: matriz de 41 requisitos (cumple / mejora / parcial / referencia / excluido por decisión / pendiente), balance y propuestas para cerrar la brecha de seguimiento sin romper la frontera del producto.
 - [`docs/04-criterio-captura-tier1.md`](docs/04-criterio-captura-tier1.md) — Dictamen técnico del profesional competente: criterio de captura en Tier 1 (cribado, no diagnóstico), lenguaje de dos capas con escalamiento vertical por severidad, catálogo de síntomas observables, matriz calibrada en lenguaje SYSO y sesgo conservador. Resuelve las decisiones pendientes de subcategorías y calibración.
 - [`prototype/index.html`](prototype/index.html) — Prototipo navegable del núcleo (v0.6).
+- [`app/`](app/) — La aplicación real (PWA React + TypeScript + Vite). Etapa 0: conexión y tipos.
+- [`supabase/migrations/`](supabase/migrations/) — Esquema de base de datos: tablas, RLS multi-proyecto, auditoría e inmutabilidad de evidencia.
 
 ## El ciclo que digitaliza la app
 
