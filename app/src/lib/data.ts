@@ -1,0 +1,110 @@
+import { supabase } from './supabase';
+import type { Modulo, Proyecto } from '../types/db';
+
+// ============================================================
+// Plantillas de secciones sugeridas por tipo de edificio.
+// Codifican el "reconocimiento previo" del procedimiento:
+// las zonas que típicamente se escapan (pasillos de servicio,
+// mezanines, cubiertas…) vienen sugeridas, no de memoria.
+// ============================================================
+export const TIPOS_EDIFICIO = ['Centro comercial', 'Oficinas', 'Industrial', 'Mixto / otro'] as const;
+export type TipoEdificio = (typeof TIPOS_EDIFICIO)[number];
+
+export const SECCIONES_SUGERIDAS: Record<TipoEdificio, string[]> = {
+  'Centro comercial': [
+    'Sótanos / parqueos',
+    'Cuarto de máquinas',
+    'Pasillos de servicio',
+    'Food court',
+    'Cubiertas',
+    'Mezanines',
+    'Locales — pasillo A',
+    'Locales — pasillo B',
+    'Áreas comunes N1',
+    'Áreas comunes N2',
+  ],
+  Oficinas: [
+    'Sótanos / parqueos',
+    'Núcleo de escaleras y ascensores',
+    'Cuartos eléctricos',
+    'Planta N1',
+    'Planta N2',
+    'Planta N3',
+    'Azotea / cubierta',
+  ],
+  Industrial: [
+    'Nave principal',
+    'Mezanines',
+    'Cuarto de máquinas',
+    'Racks / estanterías estructurales',
+    'Cubiertas',
+    'Andenes de carga',
+    'Oficinas administrativas',
+  ],
+  'Mixto / otro': ['Sótanos', 'Nivel 1', 'Nivel 2', 'Cubiertas', 'Áreas comunes'],
+};
+
+function db() {
+  if (!supabase) throw new Error('Supabase no está configurado');
+  return supabase;
+}
+
+/** Garantiza que exista la fila de perfil del usuario autenticado (FK de membresías). */
+export async function asegurarPerfil(): Promise<void> {
+  const s = db();
+  const { data: u } = await s.auth.getUser();
+  if (!u.user) return;
+  const nombre = u.user.email?.split('@')[0] ?? 'Usuario';
+  await s.from('perfil').upsert({ id: u.user.id, nombre }, { onConflict: 'id' });
+}
+
+export async function listarProyectos(): Promise<Proyecto[]> {
+  const { data, error } = await db().from('proyecto').select('*').order('created_at');
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Proyecto[];
+}
+
+/** Crea el proyecto, la membresía del creador y sus secciones, en ese orden. */
+export async function crearProyectoConSecciones(
+  nombre: string,
+  ubicacion: string,
+  secciones: string[],
+): Promise<Proyecto> {
+  const s = db();
+  const { data: u } = await s.auth.getUser();
+  if (!u.user) throw new Error('Sesión no válida');
+
+  const { data: proyecto, error: e1 } = await s
+    .from('proyecto')
+    .insert({ nombre, ubicacion: ubicacion || null })
+    .select()
+    .single();
+  if (e1) throw new Error(e1.message);
+
+  const { error: e2 } = await s
+    .from('proyecto_miembro')
+    .insert({ proyecto_id: proyecto.id, usuario_id: u.user.id, rol_en_proyecto: 'INSPECTOR' });
+  if (e2) throw new Error(e2.message);
+
+  if (secciones.length) {
+    const filas = secciones.map((nombre) => ({ proyecto_id: proyecto.id, nombre }));
+    const { error: e3 } = await s.from('modulo').insert(filas);
+    if (e3) throw new Error(e3.message);
+  }
+  return proyecto as Proyecto;
+}
+
+export async function listarModulos(proyectoId: string): Promise<Modulo[]> {
+  const { data, error } = await db()
+    .from('modulo')
+    .select('*')
+    .eq('proyecto_id', proyectoId)
+    .order('created_at');
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Modulo[];
+}
+
+export async function agregarModulo(proyectoId: string, nombre: string): Promise<void> {
+  const { error } = await db().from('modulo').insert({ proyecto_id: proyectoId, nombre });
+  if (error) throw new Error(error.message);
+}

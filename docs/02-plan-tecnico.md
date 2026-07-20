@@ -53,8 +53,8 @@ Es la combinación con **menos piezas que mantener** y que cubre de fábrica cas
 
 **Etapa 0 — Cimientos (base de datos + login).** ✅ **En marcha (2026-07-16):** esquema completo en `supabase/migrations/0001_esquema_inicial.sql` (tablas, enums, RLS multi-proyecto, auditoría, inmutabilidad de fotos e informes emitidos) y esqueleto de la PWA en `app/` (Vite + React + TS, cliente Supabase, tipos espejo). Falta: crear el proyecto Supabase real y aplicar la migración (pasos en `app/README.md`).
 
-**Etapa 1 — El núcleo capturable.**
-Proyectos → módulos → inspección → **registrar hallazgo con foto** → **asistente de riesgo 1–5** → matriz. Es el corazón que ya viste en el prototipo, ahora guardando de verdad.
+**Etapa 1 — El núcleo capturable.** 🔨 **En marcha (2026-07-16):** login (Supabase Auth + perfil), **onboarding de proyecto con secciones sugeridas por tipo de edificio** (chips activables + secciones propias), lista de proyectos y detalle de secciones — todo guardando en Supabase. Falta (Etapa 1b): inspección → hallazgo con foto → asistente de riesgo → matriz.
+Nota: el sandbox de desarrollo no puede alcanzar *.supabase.co (política de red); la verificación en vivo se hace corriendo la app localmente (`cd app && npm install && npm run dev`).
 
 **Etapa 2 — El entregable.**
 Elementos no evaluados + **informe PDF firmado** (colegiatura + sello de tiempo) + constancia de entrega. Con esto el MVP está **completo y usable en una inspección real**.
