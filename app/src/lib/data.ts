@@ -82,25 +82,28 @@ export async function crearProyectoConSecciones(
   const { data: u } = await s.auth.getUser();
   if (!u.user) throw new Error('Sesión no válida');
 
+  // Aseguramos el perfil aquí mismo: proyecto_miembro tiene FK a perfil.
+  await asegurarPerfil();
+
   const id = crypto.randomUUID();
   const { error: e1 } = await s
     .from('proyecto')
     .insert({ id, nombre, ubicacion: ubicacion || null });
-  if (e1) throw new Error(e1.message);
+  if (e1) throw new Error(`[paso 1: crear proyecto · uid ${u.user.id.slice(0, 8)}] ${e1.message}`);
 
   const { error: e2 } = await s
     .from('proyecto_miembro')
     .insert({ proyecto_id: id, usuario_id: u.user.id, rol_en_proyecto: 'INSPECTOR' });
-  if (e2) throw new Error(e2.message);
+  if (e2) throw new Error(`[paso 2: membresía] ${e2.message}`);
 
   if (secciones.length) {
     const filas = secciones.map((nombre) => ({ proyecto_id: id, nombre }));
     const { error: e3 } = await s.from('modulo').insert(filas);
-    if (e3) throw new Error(e3.message);
+    if (e3) throw new Error(`[paso 3: secciones] ${e3.message}`);
   }
 
   const { data: proyecto, error: e4 } = await s.from('proyecto').select('*').eq('id', id).single();
-  if (e4) throw new Error(e4.message);
+  if (e4) throw new Error(`[paso 4: lectura] ${e4.message}`);
   return proyecto as Proyecto;
 }
 

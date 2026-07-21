@@ -51,6 +51,7 @@ jobs:
       - run: npm run build
         env:
           VITE_BASE: /SEKstructures/
+          VITE_BUILD_TAG: ${{ github.run_number }}
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://dlinpxcjobqunxbxnzgz.supabase.co' }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsaW5weGNqb2JxdW54Ynhuemd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1MzkzNjMsImV4cCI6MjEwMDExNTM2M30.EehcuB-cDspxyhhvfW1LNgRvlWPcG0QnrGjm2wc6BeQ' }}
       # SPA fallback: 404 sirve la misma app

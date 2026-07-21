@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { asegurarPerfil } from '../lib/data';
+import { BUILD_TAG } from '../lib/build';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -35,7 +36,7 @@ export default function Login() {
         <div className="glyph">🏗</div>
         <div>
           <h1>SEK Estructuras</h1>
-          <div className="ver">Inspección · Etapa 1</div>
+          <div className="ver">Inspección · Etapa 1 · build {BUILD_TAG}</div>
         </div>
       </div>
       <div className="card" style={{ width: '100%', maxWidth: 380 }}>

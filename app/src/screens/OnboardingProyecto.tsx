@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { crearProyectoConSecciones, SECCIONES_SUGERIDAS, TIPOS_EDIFICIO, type TipoEdificio } from '../lib/data';
+import { BUILD_TAG } from '../lib/build';
 import type { Proyecto } from '../types/db';
 
 interface Props {
@@ -69,7 +70,7 @@ export default function OnboardingProyecto({ onListo, onCancelar }: Props) {
         <span className="step-pill">{paso} de 3</span>
       </div>
       <div className="content">
-        {error && <p className="error">{error}</p>}
+        {error && <p className="error">{error} <span className="kv">· build {BUILD_TAG}</span></p>}
 
         {paso === 1 && (
           <>
