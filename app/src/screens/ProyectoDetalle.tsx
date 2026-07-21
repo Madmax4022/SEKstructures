@@ -5,9 +5,10 @@ import type { Modulo, Proyecto } from '../types/db';
 interface Props {
   proyecto: Proyecto;
   onVolver: () => void;
+  onInspeccionar: (modulo: Modulo) => void;
 }
 
-export default function ProyectoDetalle({ proyecto, onVolver }: Props) {
+export default function ProyectoDetalle({ proyecto, onVolver, onInspeccionar }: Props) {
   const [modulos, setModulos] = useState<Modulo[] | null>(null);
   const [nueva, setNueva] = useState('');
   const [error, setError] = useState('');
@@ -50,12 +51,14 @@ export default function ProyectoDetalle({ proyecto, onVolver }: Props) {
         {modulos === null && !error && <p className="empty">Cargando…</p>}
         {modulos?.length === 0 && <p className="empty">Sin secciones aún.</p>}
         {modulos?.map((m) => (
-          <div key={m.id} className="card">
+          <div key={m.id} className="card tap" role="button" tabIndex={0}
+               onClick={() => onInspeccionar(m)} onKeyDown={(e) => e.key === 'Enter' && onInspeccionar(m)}>
             <div className="row">
               <div className="grow">
                 <div className="title">{m.nombre}</div>
-                <div className="kv">Sin inspecciones · Etapa 1b</div>
+                <div className="kv">Toca para iniciar inspección</div>
               </div>
+              <span className="kv">›</span>
             </div>
           </div>
         ))}

@@ -6,14 +6,24 @@ import Login from './screens/Login';
 import Proyectos from './screens/Proyectos';
 import OnboardingProyecto from './screens/OnboardingProyecto';
 import ProyectoDetalle from './screens/ProyectoDetalle';
-import type { Proyecto } from './types/db';
+import Seguridad from './screens/Seguridad';
+import Inspeccion from './screens/Inspeccion';
+import NuevoHallazgo from './screens/NuevoHallazgo';
+import type { Modulo, Proyecto } from './types/db';
 
-type Vista = { v: 'proyectos' } | { v: 'onboarding' } | { v: 'detalle'; proyecto: Proyecto };
+type Vista =
+  | { v: 'proyectos' }
+  | { v: 'onboarding' }
+  | { v: 'detalle'; proyecto: Proyecto }
+  | { v: 'seguridad'; proyecto: Proyecto; modulo: Modulo }
+  | { v: 'inspeccion'; proyecto: Proyecto; modulo: Modulo; inspeccionId: string }
+  | { v: 'hallazgo'; proyecto: Proyecto; modulo: Modulo; inspeccionId: string; numero: number };
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [listo, setListo] = useState(false);
   const [vista, setVista] = useState<Vista>({ v: 'proyectos' });
+  const [toast, setToast] = useState('');
 
   useEffect(() => {
     if (!supabase) {
@@ -31,6 +41,12 @@ export default function App() {
     });
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(''), 2600);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   if (!supabaseConfigured) {
     return (
@@ -65,7 +81,47 @@ export default function App() {
         />
       )}
       {vista.v === 'detalle' && (
-        <ProyectoDetalle proyecto={vista.proyecto} onVolver={() => setVista({ v: 'proyectos' })} />
+        <ProyectoDetalle
+          proyecto={vista.proyecto}
+          onVolver={() => setVista({ v: 'proyectos' })}
+          onInspeccionar={(m) => setVista({ v: 'seguridad', proyecto: vista.proyecto, modulo: m })}
+        />
+      )}
+      {vista.v === 'seguridad' && (
+        <Seguridad
+          proyecto={vista.proyecto}
+          modulo={vista.modulo}
+          onIniciada={(id) =>
+            setVista({ v: 'inspeccion', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: id })}
+          onCancelar={() => setVista({ v: 'detalle', proyecto: vista.proyecto })}
+        />
+      )}
+      {vista.v === 'inspeccion' && (
+        <Inspeccion
+          proyecto={vista.proyecto}
+          modulo={vista.modulo}
+          inspeccionId={vista.inspeccionId}
+          onNuevoHallazgo={(numero) =>
+            setVista({ v: 'hallazgo', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: vista.inspeccionId, numero })}
+          onVolver={() => setVista({ v: 'detalle', proyecto: vista.proyecto })}
+        />
+      )}
+      {vista.v === 'hallazgo' && (
+        <NuevoHallazgo
+          proyecto={vista.proyecto}
+          modulo={vista.modulo}
+          inspeccionId={vista.inspeccionId}
+          numero={vista.numero}
+          onGuardado={(msg) => {
+            setToast(msg);
+            setVista({ v: 'inspeccion', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: vista.inspeccionId });
+          }}
+          onCancelar={() =>
+            setVista({ v: 'inspeccion', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: vista.inspeccionId })}
+        />
+      )}
+      {toast && (
+        <div className="toast" role="status"><span className="tk">✓</span><span>{toast}</span></div>
       )}
     </div>
   );

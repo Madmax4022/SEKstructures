@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Modulo, Proyecto } from '../types/db';
+import type { Hallazgo, Modulo, Proyecto } from '../types/db';
 
 // ============================================================
 // Plantillas de secciones sugeridas por tipo de edificio.
@@ -119,5 +119,46 @@ export async function listarModulos(proyectoId: string): Promise<Modulo[]> {
 
 export async function agregarModulo(proyectoId: string, nombre: string): Promise<void> {
   const { error } = await db().from('modulo').insert({ proyecto_id: proyectoId, nombre });
+  if (error) throw new Error(error.message);
+}
+
+/** Crea la inspección tras el checklist de seguridad (ATS/EPP). Devuelve su id. */
+export async function crearInspeccion(
+  proyectoId: string,
+  moduloId: string,
+  checklistSeguridad: Record<string, boolean>,
+): Promise<string> {
+  const s = db();
+  const { data: u } = await s.auth.getUser();
+  if (!u.user) throw new Error('Sesión no válida');
+  const id = crypto.randomUUID();
+  const { error } = await s.from('inspeccion').insert({
+    id,
+    proyecto_id: proyectoId,
+    modulo_id: moduloId,
+    inspector_id: u.user.id,
+    checklist_seguridad: checklistSeguridad,
+  });
+  if (error) throw new Error(error.message);
+  return id;
+}
+
+export async function listarHallazgos(inspeccionId: string): Promise<Hallazgo[]> {
+  const { data, error } = await db()
+    .from('hallazgo')
+    .select('*')
+    .eq('inspeccion_id', inspeccionId)
+    .order('nivel_riesgo', { ascending: false })
+    .order('numero');
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Hallazgo[];
+}
+
+export type NuevoHallazgoInput = Omit<Hallazgo, 'id' | 'created_at'>;
+
+export async function crearHallazgo(h: NuevoHallazgoInput): Promise<void> {
+  const { error } = await db()
+    .from('hallazgo')
+    .insert({ id: crypto.randomUUID(), ...h });
   if (error) throw new Error(error.message);
 }
