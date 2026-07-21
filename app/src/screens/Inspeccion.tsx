@@ -42,6 +42,8 @@ export default function Inspeccion({ modulo, inspeccionId, onNuevoHallazgo, onNo
           Registra cada hallazgo con su síntoma y nivel de riesgo. La matriz se ordena sola por severidad.
         </p>
         {error && <p className="error">{error}</p>}
+        {(hallazgos?.length ?? 0) > 3 && (<>
+        <div className="sect">Filtrar por nivel de riesgo</div>
         <div className="filters">
           <button className="fchip all" aria-pressed={filtro === 'all'} onClick={() => setFiltro('all')}>Todos</button>
           {NIVELES.map((n) => (
@@ -56,6 +58,7 @@ export default function Inspeccion({ modulo, inspeccionId, onNuevoHallazgo, onNo
             </button>
           ))}
         </div>
+        </>)}
         {visibles === null && !error && <p className="empty">Cargando…</p>}
         {visibles?.length === 0 && (
           <p className="empty">{filtro === 'all' ? 'Aún sin hallazgos. Registra el primero.' : 'Sin hallazgos en este nivel.'}</p>
