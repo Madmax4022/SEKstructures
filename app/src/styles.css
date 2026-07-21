@@ -201,3 +201,5 @@ label.f > span {
 .toast .tk { width: 20px; height: 20px; border-radius: 999px; background: var(--ok); color: #fff;
   display: grid; place-items: center; font-size: 12px; flex: 0 0 auto; }
 .step-pill.ml { margin-left: auto; }
+/* El chip "Todos" activo invierte el texto (antes: blanco sobre blanco en tema oscuro) */
+.fchip.all[aria-pressed="true"] { color: var(--surface); }

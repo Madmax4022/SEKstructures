@@ -41,7 +41,7 @@ export default function Inspeccion({ modulo, inspeccionId, onNuevoHallazgo, onVo
         </p>
         {error && <p className="error">{error}</p>}
         <div className="filters">
-          <button className="fchip" aria-pressed={filtro === 'all'} onClick={() => setFiltro('all')}>Todos</button>
+          <button className="fchip all" aria-pressed={filtro === 'all'} onClick={() => setFiltro('all')}>Todos</button>
           {NIVELES.map((n) => (
             <button
               key={n}
@@ -74,7 +74,7 @@ export default function Inspeccion({ modulo, inspeccionId, onNuevoHallazgo, onVo
                 <div className="muted">
                   {h.ubicacion} · {h.sintoma_principal}
                   {h.sintomas.length > 1 && <b> +{h.sintomas.length - 1}</b>}
-                  {h.medida_guiada && ` (${h.medida_guiada})`}
+                  {h.medida_guiada && ` · ${h.medida_guiada}`}
                 </div>
                 <div className="kv" style={{ marginTop: 7 }}>Plazo sugerido · {PLAZO[h.nivel_riesgo]}</div>
               </div>
