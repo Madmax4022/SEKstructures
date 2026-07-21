@@ -156,9 +156,69 @@ export async function listarHallazgos(inspeccionId: string): Promise<Hallazgo[]>
 
 export type NuevoHallazgoInput = Omit<Hallazgo, 'id' | 'created_at'>;
 
-export async function crearHallazgo(h: NuevoHallazgoInput): Promise<void> {
-  const { error } = await db()
-    .from('hallazgo')
-    .insert({ id: crypto.randomUUID(), ...h });
+export async function crearHallazgo(h: NuevoHallazgoInput): Promise<string> {
+  const id = crypto.randomUUID();
+  const { error } = await db().from('hallazgo').insert({ id, ...h });
+  if (error) throw new Error(error.message);
+  return id;
+}
+
+/** Sube la foto al bucket 'evidencia' y registra la fila inmutable. */
+export async function subirFoto(proyectoId: string, hallazgoId: string, file: File): Promise<void> {
+  const s = db();
+  const path = `${proyectoId}/${hallazgoId}/${Date.now()}.jpg`;
+  const { error: e1 } = await s.storage.from('evidencia').upload(path, file, { contentType: file.type || 'image/jpeg' });
+  if (e1) throw new Error(`[foto: subida] ${e1.message}`);
+  const { error: e2 } = await s.from('foto').insert({ id: crypto.randomUUID(), hallazgo_id: hallazgoId, storage_path: path });
+  if (e2) throw new Error(`[foto: registro] ${e2.message}`);
+}
+
+export interface NoEvaluado { id: string; inspeccion_id: string; descripcion: string; motivo: string; medio_intentado: string }
+
+export async function listarNoEvaluados(inspeccionId: string): Promise<NoEvaluado[]> {
+  const { data, error } = await db().from('elemento_no_evaluado').select('*').eq('inspeccion_id', inspeccionId).order('created_at');
+  if (error) throw new Error(error.message);
+  return (data ?? []) as NoEvaluado[];
+}
+
+export async function agregarNoEvaluado(inspeccionId: string, descripcion: string, motivo: string, medio: string): Promise<void> {
+  const { error } = await db().from('elemento_no_evaluado')
+    .insert({ id: crypto.randomUUID(), inspeccion_id: inspeccionId, descripcion, motivo, medio_intentado: medio });
+  if (error) throw new Error(error.message);
+}
+
+export async function obtenerPerfil(): Promise<{ nombre: string; colegiatura_registro: string | null }> {
+  const s = db();
+  const { data: u } = await s.auth.getUser();
+  const { data } = await s.from('perfil').select('nombre,colegiatura_registro').eq('id', u.user?.id ?? '').single();
+  return (data as { nombre: string; colegiatura_registro: string | null }) ?? { nombre: 'Inspector', colegiatura_registro: null };
+}
+
+export async function contarFotos(hallazgoIds: string[]): Promise<number> {
+  if (!hallazgoIds.length) return 0;
+  const { count } = await db().from('foto').select('id', { count: 'exact', head: true }).in('hallazgo_id', hallazgoIds);
+  return count ?? 0;
+}
+
+export async function emitirInforme(args: {
+  inspeccionId: string; colegiatura: string; resumen: Record<string, number>;
+  declaracion: string; entregadoA: string;
+}): Promise<void> {
+  const s = db();
+  const { data: u } = await s.auth.getUser();
+  if (!u.user) throw new Error('Sesión no válida');
+  await s.from('perfil').update({ colegiatura_registro: args.colegiatura }).eq('id', u.user.id);
+  const { error } = await s.from('informe').insert({
+    id: crypto.randomUUID(),
+    inspeccion_id: args.inspeccionId,
+    estado: 'EMITIDO',
+    emitido_por: u.user.id,
+    colegiatura_registro: args.colegiatura,
+    sello_tiempo: new Date().toISOString(),
+    resumen_por_nivel: args.resumen,
+    declaracion_alcance: args.declaracion,
+    entregado_a: args.entregadoA || null,
+    fecha_entrega: new Date().toISOString(),
+  });
   if (error) throw new Error(error.message);
 }

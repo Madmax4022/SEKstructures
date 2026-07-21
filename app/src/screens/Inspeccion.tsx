@@ -8,12 +8,14 @@ interface Props {
   modulo: Modulo;
   inspeccionId: string;
   onNuevoHallazgo: (siguienteNumero: number) => void;
+  onNoEvaluados: () => void;
+  onInforme: () => void;
   onVolver: () => void;
 }
 
 const NIVELES = [5, 4, 3, 2, 1] as const;
 
-export default function Inspeccion({ modulo, inspeccionId, onNuevoHallazgo, onVolver }: Props) {
+export default function Inspeccion({ modulo, inspeccionId, onNuevoHallazgo, onNoEvaluados, onInforme, onVolver }: Props) {
   const [hallazgos, setHallazgos] = useState<Hallazgo[] | null>(null);
   const [filtro, setFiltro] = useState<'all' | number>('all');
   const [error, setError] = useState('');
@@ -93,6 +95,8 @@ export default function Inspeccion({ modulo, inspeccionId, onNuevoHallazgo, onVo
           <button className="btn primary" onClick={() => onNuevoHallazgo((hallazgos?.length ?? 0) + 1)}>
             + Nuevo hallazgo
           </button>
+          <button className="btn ghost" onClick={onNoEvaluados}>Elementos no evaluados</button>
+          <button className="btn ghost" onClick={onInforme}>Generar entregable →</button>
         </div>
       </div>
     </>

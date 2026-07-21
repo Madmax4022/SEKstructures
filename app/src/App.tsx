@@ -9,6 +9,8 @@ import ProyectoDetalle from './screens/ProyectoDetalle';
 import Seguridad from './screens/Seguridad';
 import Inspeccion from './screens/Inspeccion';
 import NuevoHallazgo from './screens/NuevoHallazgo';
+import NoEvaluados from './screens/NoEvaluados';
+import Informe from './screens/Informe';
 import type { Modulo, Proyecto } from './types/db';
 
 type Vista =
@@ -17,7 +19,9 @@ type Vista =
   | { v: 'detalle'; proyecto: Proyecto }
   | { v: 'seguridad'; proyecto: Proyecto; modulo: Modulo }
   | { v: 'inspeccion'; proyecto: Proyecto; modulo: Modulo; inspeccionId: string }
-  | { v: 'hallazgo'; proyecto: Proyecto; modulo: Modulo; inspeccionId: string; numero: number };
+  | { v: 'hallazgo'; proyecto: Proyecto; modulo: Modulo; inspeccionId: string; numero: number }
+  | { v: 'unev'; proyecto: Proyecto; modulo: Modulo; inspeccionId: string }
+  | { v: 'informe'; proyecto: Proyecto; modulo: Modulo; inspeccionId: string };
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -103,6 +107,8 @@ export default function App() {
           inspeccionId={vista.inspeccionId}
           onNuevoHallazgo={(numero) =>
             setVista({ v: 'hallazgo', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: vista.inspeccionId, numero })}
+          onNoEvaluados={() => setVista({ v: 'unev', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: vista.inspeccionId })}
+          onInforme={() => setVista({ v: 'informe', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: vista.inspeccionId })}
           onVolver={() => setVista({ v: 'detalle', proyecto: vista.proyecto })}
         />
       )}
@@ -119,6 +125,14 @@ export default function App() {
           onCancelar={() =>
             setVista({ v: 'inspeccion', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: vista.inspeccionId })}
         />
+      )}
+      {vista.v === 'unev' && (
+        <NoEvaluados inspeccionId={vista.inspeccionId}
+          onVolver={() => setVista({ v: 'inspeccion', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: vista.inspeccionId })} />
+      )}
+      {vista.v === 'informe' && (
+        <Informe proyecto={vista.proyecto} modulo={vista.modulo} inspeccionId={vista.inspeccionId}
+          onVolver={() => setVista({ v: 'inspeccion', proyecto: vista.proyecto, modulo: vista.modulo, inspeccionId: vista.inspeccionId })} />
       )}
       {toast && (
         <div className="toast" role="status"><span className="tk">✓</span><span>{toast}</span></div>
