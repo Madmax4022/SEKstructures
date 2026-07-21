@@ -20,6 +20,22 @@ PWA en React + TypeScript + Vite sobre Supabase. Estado: **Etapa 0** (cimientos)
    ```
    La pantalla de estado confirma la conexión ("Conectado a Supabase ✓").
 
+## Publicar en GitHub Pages (link gratis desde el repo)
+
+Ya hay un flujo de despliegue automático (`.github/workflows/deploy-pages.yml`). Configuración de una sola vez:
+
+1. **Variables de entorno:** repo → *Settings → Secrets and variables → Actions → Variables* → *New repository variable*, dos veces:
+   - `VITE_SUPABASE_URL` = `https://TU-PROYECTO.supabase.co`
+   - `VITE_SUPABASE_ANON_KEY` = tu anon key *(es pública por diseño; RLS protege los datos)*
+2. **Activar Pages:** repo → *Settings → Pages → Build and deployment → Source: **GitHub Actions***.
+3. **Auth de Supabase:** panel de Supabase → *Authentication → URL Configuration* → agrega la URL de Pages
+   (`https://<usuario>.github.io/SEKstructures/`) como *Site URL* y *Redirect URL*.
+
+Con eso, cada push a la rama redepliega la app y el link queda en
+`https://<usuario>.github.io/SEKstructures/`. También puedes dispararlo a mano en *Actions → Desplegar PWA a GitHub Pages → Run workflow*.
+
+> **Nota:** la *anon key* viaja en el bundle público (así funcionan todas las apps cliente de Supabase); la seguridad real la dan las políticas RLS de la migración, no el ocultamiento de esa clave.
+
 ## Estructura
 
 | Ruta | Qué es |
