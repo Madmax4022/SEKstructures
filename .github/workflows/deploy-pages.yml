@@ -1,11 +1,16 @@
 name: Desplegar PWA a GitHub Pages
 
 # Compila la app de app/ y la publica en GitHub Pages.
-# Requiere (una sola vez, en el repo):
-#   1. Settings -> Pages -> Source: "GitHub Actions"
-#   2. Settings -> Secrets and variables -> Actions -> Variables:
-#        VITE_SUPABASE_URL       = https://TU-PROYECTO.supabase.co
-#        VITE_SUPABASE_ANON_KEY  = tu anon key (es pública por diseño; RLS protege los datos)
+#
+# La URL y la anon key de Supabase van como valores por defecto abajo: la anon
+# key es PÚBLICA por diseño (viaja en el bundle de cualquier app cliente de
+# Supabase) y lo que protege los datos son las políticas RLS de la migración,
+# no ocultar esa clave. Se pueden sobreescribir con Variables del repo
+# (Settings -> Secrets and variables -> Actions -> Variables) sin tocar este archivo.
+#
+# El paso "configure-pages" con enablement:true intenta activar Pages solo en
+# la primera corrida. Si el permiso no alcanza, activarlo a mano es un clic:
+# Settings -> Pages -> Source: "GitHub Actions".
 
 on:
   push:
@@ -37,12 +42,17 @@ jobs:
           node-version: 20
           cache: npm
           cache-dependency-path: app/package-lock.json
+      - name: Activar Pages (best-effort en la primera corrida)
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+        with:
+          enablement: true
       - run: npm ci
       - run: npm run build
         env:
           VITE_BASE: /SEKstructures/
-          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://dlinpxcjobqunxbxnzgz.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsaW5weGNqb2JxdW54Ynhuemd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1MzkzNjMsImV4cCI6MjEwMDExNTM2M30.EehcuB-cDspxyhhvfW1LNgRvlWPcG0QnrGjm2wc6BeQ' }}
       # SPA fallback: 404 sirve la misma app
       - run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v3
