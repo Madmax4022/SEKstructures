@@ -64,7 +64,15 @@ export async function listarProyectos(): Promise<Proyecto[]> {
   return (data ?? []) as Proyecto[];
 }
 
-/** Crea el proyecto, la membresía del creador y sus secciones, en ese orden. */
+/**
+ * Crea el proyecto, la membresía del creador y sus secciones, en ese orden.
+ *
+ * El id se genera EN EL CLIENTE (diseño sync-ready, U2) y el insert va sin
+ * RETURNING: con RLS, "insert ... returning" exige que la fila sea visible por
+ * la política de SELECT, y en ese instante el creador aún no es miembro
+ * (huevo y gallina → "new row violates row-level security policy").
+ * El proyecto se lee al final, ya con la membresía creada.
+ */
 export async function crearProyectoConSecciones(
   nombre: string,
   ubicacion: string,
@@ -74,23 +82,25 @@ export async function crearProyectoConSecciones(
   const { data: u } = await s.auth.getUser();
   if (!u.user) throw new Error('Sesión no válida');
 
-  const { data: proyecto, error: e1 } = await s
+  const id = crypto.randomUUID();
+  const { error: e1 } = await s
     .from('proyecto')
-    .insert({ nombre, ubicacion: ubicacion || null })
-    .select()
-    .single();
+    .insert({ id, nombre, ubicacion: ubicacion || null });
   if (e1) throw new Error(e1.message);
 
   const { error: e2 } = await s
     .from('proyecto_miembro')
-    .insert({ proyecto_id: proyecto.id, usuario_id: u.user.id, rol_en_proyecto: 'INSPECTOR' });
+    .insert({ proyecto_id: id, usuario_id: u.user.id, rol_en_proyecto: 'INSPECTOR' });
   if (e2) throw new Error(e2.message);
 
   if (secciones.length) {
-    const filas = secciones.map((nombre) => ({ proyecto_id: proyecto.id, nombre }));
+    const filas = secciones.map((nombre) => ({ proyecto_id: id, nombre }));
     const { error: e3 } = await s.from('modulo').insert(filas);
     if (e3) throw new Error(e3.message);
   }
+
+  const { data: proyecto, error: e4 } = await s.from('proyecto').select('*').eq('id', id).single();
+  if (e4) throw new Error(e4.message);
   return proyecto as Proyecto;
 }
 
