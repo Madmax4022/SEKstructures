@@ -15,8 +15,21 @@ function csvMatriz(hallazgos: Hallazgo[]): string {
     String(h.numero).padStart(3, '0'), h.nivel_riesgo, h.descripcion, h.ubicacion,
     h.sintoma_principal, PLAZO[h.nivel_riesgo], '', 'ABIERTO', '', '', '', '', '',
   ]);
-  const esc = (v: unknown) => `"${String(v).replace(/"/g, '""')}"`;
-  return '﻿sep=;\r\n' + [head, ...filas].map((f) => f.map(esc).join(';')).join('\r\n');
+  const esc = (v: unknown) => String(v).replace(/[\t\r\n]+/g, ' ');
+  return [head, ...filas].map((f) => f.map(esc).join('\t')).join('\r\n');
+}
+
+/** UTF-16LE con BOM: la única codificación que Excel abre bien en cualquier región. */
+function aUtf16le(texto: string): ArrayBuffer {
+  const ab = new ArrayBuffer(texto.length * 2 + 2);
+  const buf = new Uint8Array(ab);
+  buf[0] = 0xff; buf[1] = 0xfe;
+  for (let i = 0; i < texto.length; i++) {
+    const c = texto.charCodeAt(i);
+    buf[2 + i * 2] = c & 0xff;
+    buf[3 + i * 2] = c >> 8;
+  }
+  return ab;
 }
 
 export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Props) {
@@ -60,7 +73,11 @@ export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Pr
       th{background:#eaf0f7;font-size:11px;text-transform:uppercase}
       td.n5{background:#d6304a;color:#fff;font-weight:700;text-align:center}td.n4{background:#df7333;color:#fff;font-weight:700;text-align:center}
       td.n3{background:#c2890f;color:#fff;font-weight:700;text-align:center}td.n2{background:#3e9b5f;color:#fff;font-weight:700;text-align:center}td.n1{background:#3e77c4;color:#fff;font-weight:700;text-align:center}
-      .firma{margin-top:36px;border-top:1px solid #152238;padding-top:8px;width:320px;font-size:13px}
+      .sigrow{display:flex;gap:24px;margin-top:40px}
+      .sigbox{flex:1;border:1.5px solid #152238;border-radius:8px;height:130px;position:relative;padding:10px 12px;font-size:12px}
+      .sigbox .lab{text-transform:uppercase;letter-spacing:1px;font-size:10px;color:#54627b}
+      .sigbox .line{position:absolute;bottom:44px;left:14px;right:14px;border-bottom:1px solid #152238}
+      .sigbox .quien{position:absolute;bottom:10px;left:14px;right:14px;font-size:11.5px;color:#152238;line-height:1.4}
       .decl{font-size:12px;color:#54627b;border:1px solid #c2cfe0;padding:10px 12px;border-radius:6px}
     </style></head><body>
       <h1>Informe de inspección — ${proyecto.nombre}</h1>
@@ -74,7 +91,12 @@ export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Pr
       ${unevFilas ? '<ul>' + unevFilas + '</ul>' : '<p>Ninguno registrado.</p>'}
       <h2>Declaración de alcance</h2>
       <p class="decl">${declaracion}</p>
-      <div class="firma">${nombre}<br>Colegiatura / registro: ${colegiatura || '—'}<br>Sello de tiempo: ${emitido ?? '(borrador — sin emitir)'}</div>
+      <div class="sigrow">
+        <div class="sigbox"><span class="lab">Firma del profesional competente</span><span class="line"></span>
+          <span class="quien">${nombre} · Colegiatura: ${colegiatura || '—'}<br>Sello de tiempo: ${emitido ?? '(borrador — sin emitir)'}</span></div>
+        <div class="sigbox"><span class="lab">Recibido por</span><span class="line"></span>
+          <span class="quien">${entregadoA || 'Nombre y fecha'}</span></div>
+      </div>
     </body></html>`;
     const f = document.createElement('iframe');
     f.style.display = 'none';
@@ -84,7 +106,7 @@ export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Pr
   }
 
   function descargarMatriz() {
-    const blob = new Blob([csvMatriz(hallazgos)], { type: 'text/csv;charset=utf-8' });
+    const blob = new Blob([aUtf16le(csvMatriz(hallazgos))], { type: 'text/csv;charset=utf-16le' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `matriz-seguimiento-${modulo.nombre.replace(/\W+/g, '-')}.csv`;
