@@ -222,3 +222,66 @@ export async function emitirInforme(args: {
   });
   if (error) throw new Error(error.message);
 }
+
+/**
+ * (A2) Comprime la foto en el propio teléfono antes de subirla: reescala el lado
+ * mayor y recodifica a JPEG. Una foto de cámara (3–6 MB) baja a ~200–500 KB, lo
+ * que hace viable subir 30 hallazgos con datos móviles.
+ */
+export async function comprimirImagen(file: File, maxLado = 1600, calidad = 0.75): Promise<File> {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const escala = Math.min(1, maxLado / Math.max(bitmap.width, bitmap.height));
+    const w = Math.round(bitmap.width * escala);
+    const h = Math.round(bitmap.height * escala);
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close();
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/jpeg', calidad));
+    if (!blob || blob.size >= file.size) return file;
+    return new File([blob], 'foto.jpg', { type: 'image/jpeg' });
+  } catch {
+    return file; // si el navegador no soporta la API, se sube el original
+  }
+}
+
+/** (A1) Descarga las fotos de un hallazgo como data URL, para incrustarlas en el PDF. */
+export async function fotosComoDataUrl(hallazgoIds: string[]): Promise<Map<string, string[]>> {
+  const mapa = new Map<string, string[]>();
+  if (!hallazgoIds.length) return mapa;
+  const s = db();
+  const { data } = await s.from('foto').select('hallazgo_id,storage_path').in('hallazgo_id', hallazgoIds);
+  for (const f of (data ?? []) as { hallazgo_id: string; storage_path: string }[]) {
+    const { data: blob } = await s.storage.from('evidencia').download(f.storage_path);
+    if (!blob) continue;
+    const url = await new Promise<string>((res) => {
+      const r = new FileReader();
+      r.onloadend = () => res(String(r.result));
+      r.readAsDataURL(blob);
+    });
+    mapa.set(f.hallazgo_id, [...(mapa.get(f.hallazgo_id) ?? []), url]);
+  }
+  return mapa;
+}
+
+/** (A3) Enlaces firmados temporales para ver las fotos de un hallazgo en pantalla. */
+export async function urlsFotos(hallazgoId: string): Promise<string[]> {
+  const s = db();
+  const { data } = await s.from('foto').select('storage_path').eq('hallazgo_id', hallazgoId);
+  const urls: string[] = [];
+  for (const f of (data ?? []) as { storage_path: string }[]) {
+    const { data: firmada } = await s.storage.from('evidencia').createSignedUrl(f.storage_path, 3600);
+    if (firmada?.signedUrl) urls.push(firmada.signedUrl);
+  }
+  return urls;
+}
+
+/** (A3) Elimina un hallazgo capturado por error. Las fotos se borran en cascada. */
+export async function borrarHallazgo(id: string): Promise<void> {
+  const { error } = await db().from('hallazgo').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+}

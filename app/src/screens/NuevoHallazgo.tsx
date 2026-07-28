@@ -3,7 +3,7 @@ import {
   CAT_E, CAT_NE, CATALOGO_E, CATALOGO_NE, MEDIDAS, PROB_OPTS, SEV_OPTS, SINTOMAS, SYM_COMBOS,
   SYM_LABEL, VERTICALES, computarNivel, PLAZO, sortSym,
 } from '../lib/criterio';
-import { crearHallazgo, subirFoto } from '../lib/data';
+import { comprimirImagen, crearHallazgo, subirFoto } from '../lib/data';
 import type { Modulo, Proyecto } from '../types/db';
 
 interface Props {
@@ -39,6 +39,7 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
   const [esLocal, setEsLocal] = useState(false);
   const [foto, setFoto] = useState<File | null>(null);
   const [verCatalogo, setVerCatalogo] = useState(false);
+  const [comprimiendo, setComprimiendo] = useState(false);
   // paso 2 — riesgo
   const [sev, setSev] = useState<number | null>(null);
   const [prob, setProb] = useState<number | null>(null);
@@ -50,7 +51,7 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
   const ordenadas = useMemo(() => sortSym(sintomas), [sintomas]);
   const nivel = computarNivel(sev, prob, reglaDura);
   const combos = SYM_COMBOS.filter((c) => c.req.every((k) => sintomas.includes(k)));
-  const listoPaso1 = descripcion.trim().length > 0 && sintomas.length > 0 && foto !== null;
+  const listoPaso1 = descripcion.trim().length > 0 && sintomas.length > 0 && foto !== null && !comprimiendo;
 
   function toggleSintoma(k: string) {
     const s = sintomas.includes(k) ? sintomas.filter((x) => x !== k) : [...sintomas, k];
@@ -220,9 +221,15 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
             <label className="f">
               <span>Evidencia fotográfica — obligatoria</span>
               <label className="btn ghost" style={{ cursor: 'pointer' }}>
-                📷 {foto ? `Fotografía adjunta ✓ (${Math.round(foto.size / 1024)} KB)` : 'Tomar fotografía'}
+                📷 {comprimiendo ? 'Optimizando foto…' : foto ? `Fotografía adjunta ✓ (${Math.round(foto.size / 1024)} KB)` : 'Tomar fotografía'}
                 <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
-                       onChange={(e) => setFoto(e.target.files?.[0] ?? null)} />
+                       onChange={async (e) => {
+                         const f = e.target.files?.[0];
+                         if (!f) return setFoto(null);
+                         setComprimiendo(true);
+                         setFoto(await comprimirImagen(f));
+                         setComprimiendo(false);
+                       }} />
               </label>
             </label>
             <div className="btnbar">

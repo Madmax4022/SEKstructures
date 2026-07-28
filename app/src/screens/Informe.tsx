@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { contarFotos, emitirInforme, listarHallazgos, listarNoEvaluados, obtenerPerfil, type NoEvaluado } from '../lib/data';
+import { contarFotos, emitirInforme, fotosComoDataUrl, listarHallazgos, listarNoEvaluados, obtenerPerfil, type NoEvaluado } from '../lib/data';
 import { PLAZO } from '../lib/criterio';
 import type { Hallazgo, Modulo, Proyecto } from '../types/db';
 
@@ -42,6 +42,7 @@ export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Pr
   const [emitido, setEmitido] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [emitiendo, setEmitiendo] = useState(false);
+  const [preparando, setPreparando] = useState(false);
 
   useEffect(() => {
     listarHallazgos(inspeccionId).then(async (hs) => {
@@ -61,7 +62,9 @@ export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Pr
   const declaracion = `Este informe cubre las etapas de inspección, clasificación de riesgo y presentación de resultados de la sección «${modulo.nombre}» del proyecto «${proyecto.nombre}». El monitoreo, cierre y verificación posteriores son responsabilidad del receptor; se anexa matriz de seguimiento para ese fin.`;
 
 
-  function imprimirInforme() {
+  async function imprimirInforme() {
+    setPreparando(true);
+    const galeria = await fotosComoDataUrl(hallazgos.map((h) => h.id)).catch(() => new Map<string, string[]>());
     const filas = hallazgos.map((h) => `<tr><td>${String(h.numero).padStart(3, '0')}</td><td class="n${h.nivel_riesgo}">${h.nivel_riesgo}</td><td>${h.descripcion}</td><td>${h.ubicacion}</td><td>${h.sintoma_principal}${h.sintomas.length > 1 ? ' +' + (h.sintomas.length - 1) : ''}</td><td>${PLAZO[h.nivel_riesgo]}</td></tr>`).join('');
     const unevFilas = unev.map((u) => `<li><b>${u.descripcion}</b> — ${u.motivo} (medio: ${u.medio_intentado})</li>`).join('');
     const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Informe de inspección — ${modulo.nombre}</title><style>
@@ -79,6 +82,10 @@ export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Pr
       .sigbox .line{position:absolute;bottom:44px;left:14px;right:14px;border-bottom:1px solid #152238}
       .sigbox .quien{position:absolute;bottom:10px;left:14px;right:14px;font-size:11.5px;color:#152238;line-height:1.4}
       .decl{font-size:12px;color:#54627b;border:1px solid #c2cfe0;padding:10px 12px;border-radius:6px}
+      .eviditem{margin-bottom:18px;page-break-inside:avoid;break-inside:avoid}
+      .evidcap{font-size:11.5px;color:#152238;margin-bottom:5px}
+      .evidfotos{display:flex;gap:8px;flex-wrap:wrap}
+      .evidfotos img{max-width:47%;max-height:230px;border:1px solid #c2cfe0;border-radius:4px;object-fit:cover}
     </style></head><body>
       <h1>Informe de inspección — ${proyecto.nombre}</h1>
       <div class="meta">Sección: ${modulo.nombre} · Emitido: ${emitido ?? new Date().toLocaleString('es-CR')} · Hallazgos: ${total} · No evaluados: ${unev.length} · Evidencia: ${fotos}/${total} fotos</div>
@@ -87,6 +94,14 @@ export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Pr
       <tr><td>${resumen['5']}</td><td>${resumen['4']}</td><td>${resumen['3']}</td><td>${resumen['2']}</td><td>${resumen['1']}</td></tr></table>
       <h2>Matriz de hallazgos</h2>
       <table><tr><th>N°</th><th>Nivel</th><th>Descripción</th><th>Ubicación</th><th>Síntomas</th><th>Plazo sugerido</th></tr>${filas}</table>
+      <h2>Evidencia fotográfica</h2>
+      ${hallazgos.some((h) => (galeria.get(h.id) ?? []).length)
+        ? hallazgos.filter((h) => (galeria.get(h.id) ?? []).length).map((h) => `
+            <div class="eviditem">
+              <div class="evidcap"><b>#${String(h.numero).padStart(3, '0')}</b> · Nivel ${h.nivel_riesgo} · ${h.ubicacion} — ${h.descripcion}</div>
+              <div class="evidfotos">${(galeria.get(h.id) ?? []).map((src) => `<img src="${src}" alt="Evidencia del hallazgo ${h.numero}">`).join('')}</div>
+            </div>`).join('')
+        : '<p>Sin fotografías disponibles.</p>'}
       <h2>Elementos no evaluados (alcance real)</h2>
       ${unevFilas ? '<ul>' + unevFilas + '</ul>' : '<p>Ninguno registrado.</p>'}
       <h2>Declaración de alcance</h2>
@@ -102,7 +117,7 @@ export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Pr
     f.style.display = 'none';
     document.body.appendChild(f);
     f.srcdoc = html;
-    f.onload = () => { f.contentWindow?.print(); setTimeout(() => f.remove(), 2000); };
+    f.onload = () => { f.contentWindow?.print(); setPreparando(false); setTimeout(() => f.remove(), 2000); };
   }
 
   function descargarMatriz() {
@@ -185,8 +200,8 @@ export default function Informe({ proyecto, modulo, inspeccionId, onVolver }: Pr
         )}
 
         <div className="btnbar">
-          <button className="btn ghost" onClick={imprimirInforme} disabled={total === 0}>
-            🖨 Informe — imprimir / guardar PDF
+          <button className="btn ghost" onClick={imprimirInforme} disabled={total === 0 || preparando}>
+            {preparando ? 'Preparando informe con fotos…' : '🖨 Informe — imprimir / guardar PDF'}
           </button>
           <button className="btn ghost" onClick={descargarMatriz} disabled={total === 0}>
             ⇩ Matriz de seguimiento (CSV para Excel)

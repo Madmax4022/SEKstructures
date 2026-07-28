@@ -21,15 +21,15 @@
 
 ---
 
-## Fase A — Endurecer para uso real *(próximas semanas)*
+## Fase A — Endurecer para uso real *(A1–A3 completados)*
 
 Objetivo: que otra persona además de ti pueda usarlo en una inspección real sin acompañamiento.
 
 | # | Entregable | Por qué |
 |---|---|---|
-| A1 | **Fotos en el informe PDF** | Hoy se cuentan pero no se ven; la evidencia visual es el corazón del entregable |
-| A2 | **Compresión de fotos en el teléfono** | Una foto de 4 MB × 30 hallazgos agota datos y almacenamiento |
-| A3 | **Ver / borrar hallazgo registrado** | Hoy no se puede corregir un error de captura |
+| A1 | ✅ **Fotos en el informe PDF** | *Hecho 2026-07-21:* sección «Evidencia fotográfica» con las fotos incrustadas, agrupadas por hallazgo con su nivel y ubicación |
+| A2 | ✅ **Compresión de fotos en el teléfono** | *Hecho 2026-07-21:* reescalado a 1600 px + JPEG. Medido: 30 MB → 314 KB (−99 %). Si no reduce, conserva el original |
+| A3 | ✅ **Ver / borrar hallazgo registrado** | *Hecho 2026-07-21:* toca una tarjeta para ver detalle con foto y datos; eliminar con confirmación |
 | A4 | **Varias fotos por hallazgo** | Un hallazgo suele necesitar contexto + detalle |
 | A5 | **Reanudar inspección en curso** | Si cierras la app, hoy pierdes el hilo de la inspección |
 | A6 | **Editar secciones del proyecto** | Renombrar o eliminar secciones creadas por error |
