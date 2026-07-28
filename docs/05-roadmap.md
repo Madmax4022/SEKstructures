@@ -21,7 +21,7 @@
 
 ---
 
-## Fase A — Endurecer para uso real *(A1–A3 completados)*
+## Fase A — Endurecer para uso real ✅ *(completada)*
 
 Objetivo: que otra persona además de ti pueda usarlo en una inspección real sin acompañamiento.
 
@@ -30,9 +30,11 @@ Objetivo: que otra persona además de ti pueda usarlo en una inspección real si
 | A1 | ✅ **Fotos en el informe PDF** | *Hecho 2026-07-21:* sección «Evidencia fotográfica» con las fotos incrustadas, agrupadas por hallazgo con su nivel y ubicación |
 | A2 | ✅ **Compresión de fotos en el teléfono** | *Hecho 2026-07-21:* reescalado a 1600 px + JPEG. Medido: 30 MB → 314 KB (−99 %). Si no reduce, conserva el original |
 | A3 | ✅ **Ver / borrar hallazgo registrado** | *Hecho 2026-07-21:* toca una tarjeta para ver detalle con foto y datos; eliminar con confirmación |
-| A4 | **Varias fotos por hallazgo** | Un hallazgo suele necesitar contexto + detalle |
-| A5 | **Reanudar inspección en curso** | Si cierras la app, hoy pierdes el hilo de la inspección |
-| A6 | **Editar secciones del proyecto** | Renombrar o eliminar secciones creadas por error |
+| A4 | ✅ **Varias fotos por hallazgo** | *Hecho 2026-07-28:* miniaturas con peso y botón para quitar; cada foto se comprime al agregarla |
+| A5 | ✅ **Reanudar inspección en curso** | *Hecho 2026-07-28:* la sección muestra su historial de inspecciones (fecha, hallazgos, en curso / emitido) y se retoma tocándola |
+| A6 | ✅ **Editar secciones del proyecto** | *Hecho 2026-07-28:* renombrar y eliminar desde la hoja de sección; no deja eliminar si ya tiene inspecciones |
+
+> **Fase A completa (2026-07-28).** La app soporta el ciclo real de inspección: varias fotos comprimidas por hallazgo, corrección de errores de captura, historial por sección y edición de secciones.
 
 ## Fase B — Trabajo sin señal *(el desbloqueador de campo)*
 

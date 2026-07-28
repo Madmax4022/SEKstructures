@@ -166,7 +166,7 @@ export async function crearHallazgo(h: NuevoHallazgoInput): Promise<string> {
 /** Sube la foto al bucket 'evidencia' y registra la fila inmutable. */
 export async function subirFoto(proyectoId: string, hallazgoId: string, file: File): Promise<void> {
   const s = db();
-  const path = `${proyectoId}/${hallazgoId}/${Date.now()}.jpg`;
+  const path = `${proyectoId}/${hallazgoId}/${crypto.randomUUID()}.jpg`;
   const { error: e1 } = await s.storage.from('evidencia').upload(path, file, { contentType: file.type || 'image/jpeg' });
   if (e1) throw new Error(`[foto: subida] ${e1.message}`);
   const { error: e2 } = await s.from('foto').insert({ id: crypto.randomUUID(), hallazgo_id: hallazgoId, storage_path: path });
@@ -283,5 +283,61 @@ export async function urlsFotos(hallazgoId: string): Promise<string[]> {
 /** (A3) Elimina un hallazgo capturado por error. Las fotos se borran en cascada. */
 export async function borrarHallazgo(id: string): Promise<void> {
   const { error } = await db().from('hallazgo').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+/** (A4) Sube varias fotos de un hallazgo, en orden. */
+export async function subirFotos(proyectoId: string, hallazgoId: string, files: File[]): Promise<void> {
+  for (const f of files) await subirFoto(proyectoId, hallazgoId, f);
+}
+
+/** (A5) Inspecciones de una sección, con su conteo de hallazgos y si ya se emitió el informe. */
+export interface InspeccionResumen {
+  id: string;
+  fecha: string;
+  created_at: string;
+  hallazgos: number;
+  emitido: boolean;
+}
+
+export async function listarInspecciones(moduloId: string): Promise<InspeccionResumen[]> {
+  const s = db();
+  const { data: insp, error } = await s
+    .from('inspeccion')
+    .select('id,fecha,created_at')
+    .eq('modulo_id', moduloId)
+    .order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  const filas = (insp ?? []) as { id: string; fecha: string; created_at: string }[];
+  if (!filas.length) return [];
+  const ids = filas.map((i) => i.id);
+  const { data: hs } = await s.from('hallazgo').select('inspeccion_id').in('inspeccion_id', ids);
+  const { data: infs } = await s.from('informe').select('inspeccion_id,estado').in('inspeccion_id', ids);
+  const conteo = new Map<string, number>();
+  for (const h of (hs ?? []) as { inspeccion_id: string }[]) {
+    conteo.set(h.inspeccion_id, (conteo.get(h.inspeccion_id) ?? 0) + 1);
+  }
+  const emitidos = new Set(
+    ((infs ?? []) as { inspeccion_id: string; estado: string }[])
+      .filter((i) => i.estado === 'EMITIDO')
+      .map((i) => i.inspeccion_id),
+  );
+  return filas.map((i) => ({ ...i, hallazgos: conteo.get(i.id) ?? 0, emitido: emitidos.has(i.id) }));
+}
+
+/** (A6) Renombrar una sección del proyecto. */
+export async function renombrarModulo(id: string, nombre: string): Promise<void> {
+  const { error } = await db().from('modulo').update({ nombre }).eq('id', id);
+  if (error) throw new Error(error.message);
+}
+
+/** (A6) Eliminar una sección. Falla a propósito si ya tiene inspecciones registradas. */
+export async function borrarModulo(id: string): Promise<void> {
+  const s = db();
+  const { data: insp } = await s.from('inspeccion').select('id').eq('modulo_id', id).limit(1);
+  if ((insp ?? []).length) {
+    throw new Error('Esta sección ya tiene inspecciones registradas y no se puede eliminar. Puedes renombrarla.');
+  }
+  const { error } = await s.from('modulo').delete().eq('id', id);
   if (error) throw new Error(error.message);
 }

@@ -223,3 +223,13 @@ label.f > span {
 .infobtn { width: 44px; height: 44px; flex: 0 0 auto; border-radius: 11px; border: 1px solid var(--line-strong);
   background: var(--surface); color: var(--brand); font-size: 18px; font-weight: 700; cursor: pointer; }
 .infobtn:hover { border-color: var(--brand); }
+
+/* ===== A4: miniaturas de evidencia ===== */
+.thumbs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.thumb { position: relative; width: 92px; height: 92px; border-radius: 11px; overflow: hidden;
+  border: 1px solid var(--line-strong); background: var(--surface-3); }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumbx { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; border-radius: 999px;
+  border: 0; background: rgba(0,0,0,.62); color: #fff; font-size: 13px; cursor: pointer; line-height: 1; }
+.thumbkb { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.55); color: #fff;
+  font-family: var(--mono); font-size: 10px; text-align: center; padding: 2px 0; }

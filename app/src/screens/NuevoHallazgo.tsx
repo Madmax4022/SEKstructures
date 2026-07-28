@@ -3,7 +3,7 @@ import {
   CAT_E, CAT_NE, CATALOGO_E, CATALOGO_NE, MEDIDAS, PROB_OPTS, SEV_OPTS, SINTOMAS, SYM_COMBOS,
   SYM_LABEL, VERTICALES, computarNivel, PLAZO, sortSym,
 } from '../lib/criterio';
-import { comprimirImagen, crearHallazgo, subirFoto } from '../lib/data';
+import { comprimirImagen, crearHallazgo, subirFotos } from '../lib/data';
 import type { Modulo, Proyecto } from '../types/db';
 
 interface Props {
@@ -37,7 +37,7 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
   const [ubicacion, setUbicacion] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [esLocal, setEsLocal] = useState(false);
-  const [foto, setFoto] = useState<File | null>(null);
+  const [fotos, setFotos] = useState<File[]>([]);
   const [verCatalogo, setVerCatalogo] = useState(false);
   const [comprimiendo, setComprimiendo] = useState(false);
   // paso 2 — riesgo
@@ -51,7 +51,7 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
   const ordenadas = useMemo(() => sortSym(sintomas), [sintomas]);
   const nivel = computarNivel(sev, prob, reglaDura);
   const combos = SYM_COMBOS.filter((c) => c.req.every((k) => sintomas.includes(k)));
-  const listoPaso1 = descripcion.trim().length > 0 && sintomas.length > 0 && foto !== null && !comprimiendo;
+  const listoPaso1 = descripcion.trim().length > 0 && sintomas.length > 0 && fotos.length > 0 && !comprimiendo;
 
   function toggleSintoma(k: string) {
     const s = sintomas.includes(k) ? sintomas.filter((x) => x !== k) : [...sintomas, k];
@@ -99,7 +99,7 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
         responsable_sugerido: null,
         plazo_sugerido: PLAZO[nivel],
       });
-      if (foto) await subirFoto(proyecto.id, hallazgoId, foto);
+      if (fotos.length) await subirFotos(proyecto.id, hallazgoId, fotos);
       onGuardado(`Hallazgo #${String(numero).padStart(3, '0')} registrado · nivel ${nivel}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -219,18 +219,38 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
                         onChange={(e) => setDescripcion(e.target.value)} placeholder="Qué se observó…" />
             </label>
             <label className="f">
-              <span>Evidencia fotográfica — obligatoria</span>
+              <span>Evidencia fotográfica — al menos una</span>
+              {fotos.length > 0 && (
+                <div className="thumbs">
+                  {fotos.map((f, i) => (
+                    <div key={i} className="thumb">
+                      <img src={URL.createObjectURL(f)} alt={`Evidencia ${i + 1}`} />
+                      <button type="button" className="thumbx" aria-label={`Quitar foto ${i + 1}`}
+                              onClick={() => setFotos(fotos.filter((_, j) => j !== i))}>✕</button>
+                      <span className="thumbkb">{Math.round(f.size / 1024)} KB</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               <label className="btn ghost" style={{ cursor: 'pointer' }}>
-                📷 {comprimiendo ? 'Optimizando foto…' : foto ? `Fotografía adjunta ✓ (${Math.round(foto.size / 1024)} KB)` : 'Tomar fotografía'}
-                <input type="file" accept="image/*" capture="environment" style={{ display: 'none' }}
+                📷 {comprimiendo ? 'Optimizando…' : fotos.length ? 'Agregar otra fotografía' : 'Tomar fotografía'}
+                <input type="file" accept="image/*" capture="environment" multiple style={{ display: 'none' }}
                        onChange={async (e) => {
-                         const f = e.target.files?.[0];
-                         if (!f) return setFoto(null);
+                         const nuevas = Array.from(e.target.files ?? []);
+                         if (!nuevas.length) return;
                          setComprimiendo(true);
-                         setFoto(await comprimirImagen(f));
+                         const comprimidas: File[] = [];
+                         for (const f of nuevas) comprimidas.push(await comprimirImagen(f));
+                         setFotos((prev) => [...prev, ...comprimidas]);
                          setComprimiendo(false);
+                         e.target.value = '';
                        }} />
               </label>
+              {fotos.length > 0 && (
+                <p className="tipline" style={{ margin: '8px 0 0' }}>
+                  {fotos.length} {fotos.length === 1 ? 'fotografía' : 'fotografías'} · una general y un detalle suele ser lo ideal
+                </p>
+              )}
             </label>
             <div className="btnbar">
               <button className="btn primary" disabled={!listoPaso1} onClick={() => setPaso(2)}>
@@ -240,7 +260,7 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
                 <p className="tipline">
                   {sintomas.length === 0 ? 'Marca al menos un síntoma para continuar.'
                     : !descripcion.trim() ? 'Escribe una descripción para continuar.'
-                    : 'Adjunta la fotografía de evidencia para continuar.'}
+                    : 'Adjunta al menos una fotografía de evidencia.'}
                 </p>
               )}
             </div>

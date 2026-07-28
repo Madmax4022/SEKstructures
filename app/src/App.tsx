@@ -89,6 +89,7 @@ export default function App() {
           proyecto={vista.proyecto}
           onVolver={() => setVista({ v: 'proyectos' })}
           onInspeccionar={(m) => setVista({ v: 'seguridad', proyecto: vista.proyecto, modulo: m })}
+          onReanudar={(m, id) => setVista({ v: 'inspeccion', proyecto: vista.proyecto, modulo: m, inspeccionId: id })}
         />
       )}
       {vista.v === 'seguridad' && (
