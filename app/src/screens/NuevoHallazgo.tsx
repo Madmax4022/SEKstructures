@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
-  CAT_E, CAT_NE, MEDIDAS, PROB_OPTS, SEV_OPTS, SINTOMAS, SYM_COMBOS, SYM_LABEL,
-  VERTICALES, computarNivel, PLAZO, sortSym,
+  CAT_E, CAT_NE, CATALOGO_E, CATALOGO_NE, MEDIDAS, PROB_OPTS, SEV_OPTS, SINTOMAS, SYM_COMBOS,
+  SYM_LABEL, VERTICALES, computarNivel, PLAZO, sortSym,
 } from '../lib/criterio';
 import { crearHallazgo, subirFoto } from '../lib/data';
 import type { Modulo, Proyecto } from '../types/db';
@@ -38,6 +38,7 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
   const [descripcion, setDescripcion] = useState('');
   const [esLocal, setEsLocal] = useState(false);
   const [foto, setFoto] = useState<File | null>(null);
+  const [verCatalogo, setVerCatalogo] = useState(false);
   // paso 2 — riesgo
   const [sev, setSev] = useState<number | null>(null);
   const [prob, setProb] = useState<number | null>(null);
@@ -160,9 +161,13 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
             </label>
             <label className="f">
               <span>{tipo === 'ESTRUCTURAL' ? 'Elemento estructural' : 'Categoría no estructural'}</span>
-              <select className="in" value={cat} onChange={(e) => setCat(e.target.value)}>
-                {(tipo === 'ESTRUCTURAL' ? CAT_E : CAT_NE).map((c) => <option key={c}>{c}</option>)}
-              </select>
+              <div className="row" style={{ gap: 8 }}>
+                <select className="in" value={cat} onChange={(e) => setCat(e.target.value)}>
+                  {(tipo === 'ESTRUCTURAL' ? CAT_E : CAT_NE).map((c) => <option key={c}>{c}</option>)}
+                </select>
+                <button type="button" className="infobtn" title="Ver catálogo con ejemplos"
+                        aria-label="Ver catálogo con ejemplos" onClick={() => setVerCatalogo(true)}>ℹ</button>
+              </div>
             </label>
             <label className="f">
               <span>Síntomas observables — marca todos los que veas</span>
@@ -320,6 +325,32 @@ export default function NuevoHallazgo({ proyecto, modulo, inspeccionId, numero, 
           </>
         )}
       </div>
+
+      {verCatalogo && (
+        <div className="sheetwrap" role="dialog" aria-modal="true" aria-label="Catálogo de elementos">
+          <div className="sheetbg" onClick={() => setVerCatalogo(false)} />
+          <div className="sheetcard">
+            <div className="sheetgrip" />
+            <div className="sheethead">
+              <b>{tipo === 'ESTRUCTURAL' ? 'Elementos estructurales' : 'Categorías no estructurales'}</b>
+              <button className="sheetx" onClick={() => setVerCatalogo(false)} aria-label="Cerrar">✕</button>
+            </div>
+            <p className="muted" style={{ marginTop: 0 }}>
+              Toca una categoría para elegirla. Si dudas, describe lo que ves y usa «Otro».
+            </p>
+            {(tipo === 'ESTRUCTURAL' ? CATALOGO_E : CATALOGO_NE).map((c) => (
+              <div key={c.t} className="catitem" role="button" tabIndex={0}
+                   onClick={() => { setCat(c.t); setVerCatalogo(false); }}
+                   onKeyDown={(e) => e.key === 'Enter' && (setCat(c.t), setVerCatalogo(false))}
+                   style={{ cursor: 'pointer' }}>
+                <div className="ct">{c.t}{cat === c.t && ' ✓'}</div>
+                <div className="cd">{c.d}</div>
+                <div className="ce">Ej.: {c.ej}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }

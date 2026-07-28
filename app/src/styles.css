@@ -203,3 +203,23 @@ label.f > span {
 .step-pill.ml { margin-left: auto; }
 /* El chip "Todos" activo invierte el texto (antes: blanco sobre blanco en tema oscuro) */
 .fchip.all[aria-pressed="true"] { color: var(--surface); }
+
+/* ===== Hoja de catálogo consultable ===== */
+.sheetwrap { position: fixed; inset: 0; z-index: 80; display: flex; flex-direction: column; justify-content: flex-end; }
+.sheetbg { position: absolute; inset: 0; background: rgba(6,14,26,.55); }
+.sheetcard { position: relative; background: var(--surface); border-radius: 22px 22px 0 0; padding: 18px 18px 26px;
+  max-height: 84vh; overflow-y: auto; border-top: 1px solid var(--line); box-shadow: 0 -12px 40px -12px rgba(0,0,0,.4);
+  max-width: 480px; margin: 0 auto; width: 100%; }
+.sheetgrip { width: 40px; height: 4px; border-radius: 99px; background: var(--line-strong); margin: 0 auto 14px; }
+.sheethead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.sheethead b { font-size: 18px; }
+.sheetx { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2);
+  color: var(--text); cursor: pointer; font-size: 16px; flex: 0 0 auto; }
+.catitem { border-bottom: 1px solid var(--line); padding: 13px 0; }
+.catitem:last-child { border-bottom: 0; }
+.catitem .ct { font-weight: 700; font-size: 15px; }
+.catitem .cd { color: var(--text-dim); font-size: 13.5px; margin-top: 3px; line-height: 1.45; }
+.catitem .ce { color: var(--text-faint); font-size: 12.5px; margin-top: 5px; line-height: 1.45; font-style: italic; }
+.infobtn { width: 44px; height: 44px; flex: 0 0 auto; border-radius: 11px; border: 1px solid var(--line-strong);
+  background: var(--surface); color: var(--brand); font-size: 18px; font-weight: 700; cursor: pointer; }
+.infobtn:hover { border-color: var(--brand); }

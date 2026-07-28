@@ -87,3 +87,30 @@ export function computarNivel(sev: number | null, prob: number | null, reglaDura
   if (sev === null || prob === null) return null;
   return MATRIZ[sev][prob];
 }
+
+/** Catálogo de referencia consultable en campo (ícono ℹ️ junto al selector). */
+export interface CatItem { t: string; d: string; ej: string }
+
+export const CATALOGO_E: CatItem[] = [
+  { t: 'Columna', d: 'Elemento vertical que transmite las cargas del edificio hacia la cimentación.', ej: 'Columnas de concreto o acero en sótanos, pasillos y estacionamientos.' },
+  { t: 'Viga', d: 'Elemento horizontal que soporta losas, techos o entrepisos y los apoya en columnas.', ej: 'Vigas de entrepiso, vigas de techo sobre food court o naves.' },
+  { t: 'Muro / cortante', d: 'Muro que resiste fuerzas laterales (sismo o viento), no solo divide espacios.', ej: 'Muros de concreto alrededor de escaleras, ascensores o cajas de servicio.' },
+  { t: 'Marco', d: 'Conjunto de columnas y vigas que trabajan juntas para resistir cargas laterales.', ej: 'Marcos de acero en naves, mezanines o estructuras de cubierta.' },
+  { t: 'Conexión / soldadura', d: 'Punto donde se unen dos elementos estructurales: placas, pernos, soldaduras.', ej: 'Placas base de columnas, uniones viga-columna, soldaduras en escaleras metálicas.' },
+  { t: 'Diafragma / entrepiso', d: 'Losa o piso que distribuye las fuerzas horizontales entre los elementos verticales.', ej: 'Losas de entrepiso, cubiertas metálicas con lámina estructural.' },
+  { t: 'Cimentación', d: 'Elementos bajo el nivel del suelo que transmiten las cargas al terreno.', ej: 'Placas, pilotes, vigas de fundación visibles en sótanos o fosos.' },
+];
+
+export const CATALOGO_NE: CatItem[] = [
+  { t: 'Sistema de protección a la vida', d: 'Todo lo que protege a las personas en una emergencia.', ej: 'Rociadores, extintores, alarmas, luces de emergencia, señalización y rutas de evacuación.' },
+  { t: 'Materiales peligrosos', d: 'Sustancias que pueden causar incendio, explosión o intoxicación.', ej: 'Tanques y cilindros de GLP, químicos de limpieza, combustibles, gases comprimidos.' },
+  { t: 'Particiones', d: 'Paredes divisorias que NO cargan peso de la estructura.', ej: 'Paredes de gypsum, muros de bloque no estructurales, mamparas entre locales.' },
+  { t: 'Cielos arquitectónicos', d: 'Cielo raso y todo lo suspendido del techo con función estética o acústica.', ej: 'Cielo suspendido de láminas, cielo de gypsum, plafones registrables.' },
+  { t: 'Luminarias', d: 'Aparatos de iluminación y sus soportes.', ej: 'Lámparas suspendidas, luminarias empotradas, reflectores en parqueos.' },
+  { t: 'Ventanería', d: 'Vidrios, marcos y fachadas acristaladas.', ej: 'Ventanales, muros cortina, vitrinas de locales, domos y claraboyas.' },
+  { t: 'Escaleras', d: 'Escaleras y sus componentes de seguridad (cuando no son estructurales).', ej: 'Escaleras metálicas de servicio, barandas, pasamanos, gradas de emergencia.' },
+  { t: 'Contenido y mobiliario', d: 'Objetos pesados que pueden volcarse, caer o desplazarse en un sismo.', ej: 'Estanterías y racks, rótulos interiores, mobiliario alto, equipos de gimnasio.' },
+  { t: 'Equipo eléctrico y mecánico', d: 'Equipos de las instalaciones del edificio y sus anclajes.', ej: 'Tableros eléctricos, transformadores, unidades de aire acondicionado, ascensores, bombas.' },
+  { t: 'Tuberías', d: 'Redes de conducción de líquidos o gases y sus soportes.', ej: 'Agua potable, aguas negras, red contra incendios, tubería de gas (GLP).' },
+  { t: 'Ductos', d: 'Conductos de aire y sus soportes colgantes.', ej: 'Ductos de aire acondicionado, extracción de cocinas, ventilación de sótanos.' },
+];
